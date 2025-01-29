@@ -1,90 +1,87 @@
-const { MongoClient } = require('mongodb');
+const express = require('express');
+const router = express.Router();
+const { ObjectId } = require('mongodb');
 
-// MongoDB connection details
-const uri = "mongodb://127.0.0.1:27017";  // MongoDB connection URI
-const dbName = "skill_scheduler";         // Database name
+// MongoDB connection (this will be initialized in server.js)
+let db;
+let plannerCollection;
+let notesCollection;
+let dashboardCollection;
 
-let db, dashboards;
+// Function to initialize collections
+const initializeCollections = (database) => {
+    db = database;
+    dashboardCollection = db.collection('dashboard');
+    plannerCollection = db.collection('planner');
+    notesCollection = db.collection('notes');
+};
 
-// Connect to MongoDB and initialize collections
-MongoClient.connect(uri, { useUnifiedTopology: true }, (err, client) => {
-    if (err) {
-        console.error("Error connecting to MongoDB:", err);
-        process.exit(1); // Exit if DB connection fails
+// GET: Dashboard data
+router.get('/dashboard', async (req, res) => {
+    try {
+        const totalTasks = await plannerCollection.countDocuments();
+        const completedTasks = await plannerCollection.countDocuments({ status: "Completed" });
+
+        const taskCompletionPercentage = ((completedTasks / totalTasks) * 100).toFixed(2);
+        const notesOverview = await notesCollection.find({}, { projection: { id: 1, title: 1, content: 1, createdAt: 1 } }).toArray();
+
+        res.status(200).json({
+            progressReport: {
+                totalTasks,
+                completedTasks,
+                taskCompletionPercentage
+            },
+            notesOverview
+        });
+    } catch (err) {
+        res.status(500).send("Error fetching dashboard data: " + err.message);
     }
-    console.log("Connected to MongoDB");
-
-    db = client.db(dbName);
-    dashboards = db.collection("dashboards"); // The collection for dashboards
 });
 
-// CRUD Operations
+router.get('/progress', async (req, res) => {
+    try {
+        const progressData = await dashboardCollection.findOne({ type: "progress" });
+        if (!progressData) return res.status(404).send("No progress data found");
 
-// GET: List all dashboards
-function getDashboards(req, res) {
-    dashboards.find().toArray((err, allDashboards) => {
-        if (err) {
-            res.status(500).send("Error fetching dashboards: " + err.message);
-        } else {
-            res.status(200).json(allDashboards);
-        }
-    });
-}
+        res.status(200).json(progressData);
+    } catch (err) {
+        res.status(500).send("Error fetching progress data: " + err.message);
+    }
+});
 
-// POST: Add a new dashboard
-function addDashboard(req, res) {
-    const newDashboard = req.body; // Get the new dashboard data from request body
-    dashboards.insertOne(newDashboard, (err, result) => {
-        if (err) {
-            res.status(500).send("Error adding dashboard: " + err.message);
-        } else {
-            res.status(201).send(`Dashboard added with ID: ${result.insertedId}`);
-        }
-    });
-}
+router.get('/notes-overview', async (req, res) => {
+    try {
+        const notesOverview = await dashboardCollection.findOne({ type: "notes-overview" });
+        if (!notesOverview) return res.status(404).send("No notes overview found");
 
-// PUT: Update a dashboard completely
-function updateDashboard(req, res) {
-    const userId = req.params.userId; // Get userId from request params
-    const updatedDashboard = req.body; // Get updated data from the request body
-    dashboards.replaceOne({ userId }, updatedDashboard, (err, result) => {
-        if (err) {
-            res.status(500).send("Error updating dashboard: " + err.message);
-        } else {
-            res.status(200).send(`${result.modifiedCount} document(s) updated`);
-        }
-    });
-}
+        res.status(200).json(notesOverview);
+    } catch (err) {
+        res.status(500).send("Error fetching notes overview: " + err.message);
+    }
+});
 
-// PATCH: Partially update a dashboard
-function patchDashboard(req, res) {
-    const userId = req.params.userId; // Get userId from request params
-    const updates = req.body;         // Get updates from the request body
-    dashboards.updateOne({ userId }, { $set: updates }, (err, result) => {
-        if (err) {
-            res.status(500).send("Error partially updating dashboard: " + err.message);
-        } else {
-            res.status(200).send(`${result.modifiedCount} document(s) updated`);
-        }
-    });
-}
+// ✅ GET: Fetch Upcoming Exam Dates
+router.get('/upcoming-exams', async (req, res) => {
+    try {
+        const exams = await dashboardCollection.find({ type: "exam-date" }).toArray();
+        if (!exams.length) return res.status(404).send("No upcoming exams found");
 
-// DELETE: Remove a dashboard
-function deleteDashboard(req, res) {
-    const userId = req.params.userId; // Get userId from request params
-    dashboards.deleteOne({ userId }, (err, result) => {
-        if (err) {
-            res.status(500).send("Error deleting dashboard: " + err.message);
-        } else {
-            res.status(200).send(`${result.deletedCount} document(s) deleted`);
-        }
-    });
-}
+        res.status(200).json(exams);
+    } catch (err) {
+        res.status(500).send("Error fetching exam dates: " + err.message);
+    }
+});
 
-module.exports = {
-    getDashboards,
-    addDashboard,
-    updateDashboard,
-    patchDashboard,
-    deleteDashboard
-};
+// ✅ POST: Add Progress Data (For Testing)
+router.post('/progress', async (req, res) => {
+    try {
+        const progressData = req.body;
+        const result = await dashboardCollection.insertOne(progressData);
+        res.status(201).send(`Progress added with ID: ${result.insertedId}`);
+    } catch (err) {
+        res.status(500).send("Error adding progress: " + err.message);
+    }
+});
+
+// Export the router and the initializeCollections function
+module.exports = { router, initializeCollections };
