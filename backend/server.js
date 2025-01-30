@@ -15,11 +15,11 @@ app.use(cors());
 
 let db;
 
-// Import Dashboard Routes
+// Import Routes
 const { router: dashboardRouter, initializeCollections: initializeDashboard } = require('./dashboard');
-
-// Import Notes Routes
 const { router: notesRouter, initializeCollections: initializeNotes } = require('./notes');
+const { router: plannerRouter, initializeCollections: initializePlanner } = require('./planner');
+const { router: quizzesRouter, initializeCollections: initializeQuizzes } = require('./quizzes');
 
 // Connect to MongoDB and initialize collections
 async function initializeDatabase() {
@@ -29,13 +29,17 @@ async function initializeDatabase() {
 
         db = client.db(dbName);
 
-        // Initialize collections in dashboard.js and notes.js
+        // Initialize collections
         initializeDashboard(db);
         initializeNotes(db);
+        initializePlanner(db); // Ensures planner, exams, and studyPlanner collections are set up
+        initializeQuizzes(db);
 
         // Register routes
         app.use('/api/dashboard', dashboardRouter);
         app.use('/api/notes', notesRouter);
+        app.use('/api/planner', plannerRouter);
+        app.use('/api/quizzes', quizzesRouter);
 
         // Start the server
         app.listen(port, () => {
