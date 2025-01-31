@@ -1,19 +1,22 @@
-
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { ObjectId } = require('mongodb');
+const { ObjectId } = require("mongodb");
 
+// MongoDB connection (initialized in server.js)
 let db;
 let notesCollection;
 
 // Function to initialize collections
 const initializeCollections = (database) => {
     db = database;
-    notesCollection = db.collection('notes');
+    notesCollection = db.collection("notes");
 };
 
-// ✅ GET: Fetch all notes
-router.get('/', async (req, res) => {
+
+//  GET: Fetch All Notes
+//  Endpoint: GET /api/notes
+//  Description: Fetch all notes from the database
+router.get("/", async (req, res) => {
     try {
         const notes = await notesCollection.find().toArray();
         res.status(200).json(notes);
@@ -22,48 +25,185 @@ router.get('/', async (req, res) => {
     }
 });
 
-// ✅ GET: Fetch a single note by ID
-router.get('/:id', async (req, res) => {
+// ✅ GET: Fetch All Yesterday's Notes
+router.get("/yesterday", async (req, res) => {
     try {
-        const note = await notesCollection.findOne({ _id: new ObjectId(req.params.id) });
-        if (!note) return res.status(404).send("Note not found");
-        res.status(200).json(note);
+        const notes = await notesCollection.find({ type: "yesterday" }).toArray();
+        res.status(200).json(notes);
     } catch (err) {
-        res.status(500).send("Error fetching note: " + err.message);
+        res.status(500).send("Error fetching yesterday's notes: " + err.message);
     }
 });
 
-// ✅ POST: Add a new note
-router.post('/', async (req, res) => {
+// ✅ POST: Add a New Yesterday's Note
+router.post("/yesterday", async (req, res) => {
     try {
-        const newNote = req.body;
+        const { title, content } = req.body;
+        const newNote = { title, content, type: "yesterday", createdAt: new Date() };
         const result = await notesCollection.insertOne(newNote);
-        res.status(201).send(`Note added with ID: ${result.insertedId}`);
+        res.status(201).json({ _id: result.insertedId, ...newNote });
     } catch (err) {
-        res.status(500).send("Error adding note: " + err.message);
+        res.status(500).send("Error adding yesterday's note: " + err.message);
     }
 });
 
-// ✅ PUT: Update a note completely
-router.put('/:id', async (req, res) => {
+// ✅ PUT: Update Yesterday's Note
+router.put("/yesterday/:id", async (req, res) => {
     try {
         const noteId = new ObjectId(req.params.id);
         const updatedNote = req.body;
-        const result = await notesCollection.replaceOne({ _id: noteId }, updatedNote);
-        res.status(200).send(`${result.modifiedCount} document(s) updated`);
+        const result = await notesCollection.updateOne({ _id: noteId }, { $set: updatedNote });
+        res.json({ message: `${result.modifiedCount} document(s) updated` });
     } catch (err) {
-        res.status(500).send("Error updating note: " + err.message);
+        res.status(500).send("Error updating yesterday's note: " + err.message);
     }
 });
 
-// ✅ DELETE: Remove a note
-router.delete('/:id', async (req, res) => {
+// ✅ DELETE: Remove Yesterday's Note
+router.delete("/yesterday/:id", async (req, res) => {
+    try {
+        await notesCollection.deleteOne({ _id: new ObjectId(req.params.id) });
+        res.json({ message: "Yesterday's note deleted" });
+    } catch (err) {
+        res.status(500).send("Error deleting yesterday's note: " + err.message);
+    }
+});
+
+/* -------------- Revision Notes -------------- */
+
+// ✅ GET: Fetch All Revision Notes
+router.get("/revision", async (req, res) => {
+    try {
+        const notes = await notesCollection.find({ type: "revision" }).toArray();
+        res.status(200).json(notes);
+    } catch (err) {
+        res.status(500).send("Error fetching revision notes: " + err.message);
+    }
+});
+
+// ✅ POST: Add a New Revision Note
+router.post("/revision", async (req, res) => {
+    try {
+        const { title, content } = req.body;
+        const newNote = { title, content, type: "revision", createdAt: new Date() };
+        const result = await notesCollection.insertOne(newNote);
+        res.status(201).json({ _id: result.insertedId, ...newNote });
+    } catch (err) {
+        res.status(500).send("Error adding revision note: " + err.message);
+    }
+});
+
+// ✅ PUT: Update Revision Note
+router.put("/revision/:id", async (req, res) => {
     try {
         const noteId = new ObjectId(req.params.id);
-        const result = await notesCollection.deleteOne({ _id: noteId });
-        res.status(200).send(`${result.deletedCount} document(s) deleted`);
+        const updatedNote = req.body;
+        const result = await notesCollection.updateOne({ _id: noteId }, { $set: updatedNote });
+        res.json({ message: `${result.modifiedCount} document(s) updated` });
     } catch (err) {
-        res.status(500).send("Error deleting note: " + err.message);
+        res.status(500).send("Error updating revision note: " + err.message);
+    }
+});
+
+// ✅ DELETE: Remove Revision Note
+router.delete("/revision/:id", async (req, res) => {
+    try {
+        await notesCollection.deleteOne({ _id: new ObjectId(req.params.id) });
+        res.json({ message: "Revision note deleted" });
+    } catch (err) {
+        res.status(500).send("Error deleting revision note: " + err.message);
+    }
+});
+
+/* -------------- Quiz Notes -------------- */
+
+// ✅ GET: Fetch All Quiz Notes
+router.get("/quizzes", async (req, res) => {
+    try {
+        const notes = await notesCollection.find({ type: "quizzes" }).toArray();
+        res.status(200).json(notes);
+    } catch (err) {
+        res.status(500).send("Error fetching quiz notes: " + err.message);
+    }
+});
+
+// ✅ POST: Add a New Quiz Note
+router.post("/quizzes", async (req, res) => {
+    try {
+        const { title, content } = req.body;
+        const newNote = { title, content, type: "quizzes", createdAt: new Date() };
+        const result = await notesCollection.insertOne(newNote);
+        res.status(201).json({ _id: result.insertedId, ...newNote });
+    } catch (err) {
+        res.status(500).send("Error adding quiz note: " + err.message);
+    }
+});
+
+// ✅ PUT: Update Quiz Note
+router.put("/quizzes/:id", async (req, res) => {
+    try {
+        const noteId = new ObjectId(req.params.id);
+        const updatedNote = req.body;
+        const result = await notesCollection.updateOne({ _id: noteId }, { $set: updatedNote });
+        res.json({ message: `${result.modifiedCount} document(s) updated` });
+    } catch (err) {
+        res.status(500).send("Error updating quiz note: " + err.message);
+    }
+});
+
+// ✅ DELETE: Remove Quiz Note
+router.delete("/quizzes/:id", async (req, res) => {
+    try {
+        await notesCollection.deleteOne({ _id: new ObjectId(req.params.id) });
+        res.json({ message: "Quiz note deleted" });
+    } catch (err) {
+        res.status(500).send("Error deleting quiz note: " + err.message);
+    }
+});
+
+/* -------------- Improvement Notes -------------- */
+
+// ✅ GET: Fetch All Improvement Notes
+router.get("/improvements", async (req, res) => {
+    try {
+        const notes = await notesCollection.find({ type: "improvements" }).toArray();
+        res.status(200).json(notes);
+    } catch (err) {
+        res.status(500).send("Error fetching improvement notes: " + err.message);
+    }
+});
+
+// ✅ POST: Add a New Improvement Note
+router.post("/improvements", async (req, res) => {
+    try {
+        const { title, content } = req.body;
+        const newNote = { title, content, type: "improvements", createdAt: new Date() };
+        const result = await notesCollection.insertOne(newNote);
+        res.status(201).json({ _id: result.insertedId, ...newNote });
+    } catch (err) {
+        res.status(500).send("Error adding improvement note: " + err.message);
+    }
+});
+
+// ✅ PUT: Update Improvement Note
+router.put("/improvements/:id", async (req, res) => {
+    try {
+        const noteId = new ObjectId(req.params.id);
+        const updatedNote = req.body;
+        const result = await notesCollection.updateOne({ _id: noteId }, { $set: updatedNote });
+        res.json({ message: `${result.modifiedCount} document(s) updated` });
+    } catch (err) {
+        res.status(500).send("Error updating improvement note: " + err.message);
+    }
+});
+
+// ✅ DELETE: Remove Improvement Note
+router.delete("/improvements/:id", async (req, res) => {
+    try {
+        await notesCollection.deleteOne({ _id: new ObjectId(req.params.id) });
+        res.json({ message: "Improvement note deleted" });
+    } catch (err) {
+        res.status(500).send("Error deleting improvement note: " + err.message);
     }
 });
 
