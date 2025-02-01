@@ -85,3 +85,4 @@ router.post('/progress', async (req, res) => {
 
 // Export the router and the initializeCollections function
 module.exports = { router, initializeCollections };
+
