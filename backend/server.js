@@ -7,6 +7,7 @@ const port = 3000;
 
 // MongoDB connection details
 const uri = "mongodb+srv://ishitatrivedi2401:ishitatrivedi061106@cluster0.j2rs8.mongodb.net/";
+
 const dbName = "skill_scheduler";
 
 // Middleware

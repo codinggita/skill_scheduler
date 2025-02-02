@@ -113,7 +113,12 @@ router.delete("/exams/:id", async (req, res) => {
 /* -------------- Study Planner (Start Date, End Date, Subject-Wise Tasks) -------------- */
 
 // ✅ GET: Fetch Study Plan for a Subject
-router.get("/study-plan/:subject", async (req, res) => {
+
+router.get("/study-planner", async (req, res) => {
+    const data = await studyPlannerCollection.find();
+    res.status(200).json(await data.toArray());
+    })
+router.get("/study-plan/:id", async (req, res) => {
     try {
         const subjectPlan = await studyPlannerCollection.findOne({ subject: req.params.subject });
         if (!subjectPlan) return res.status(404).json({ message: "No study plan found for this subject" });
