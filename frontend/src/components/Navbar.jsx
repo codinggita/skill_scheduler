@@ -6,9 +6,10 @@ const Navbar = () => {
     <nav className="navbar">
       <div className="logo">Skill Scheduler</div>
       <ul className="nav-links">
-        <li><a href="/dashboard">Dashboard</a></li>
+        <li><a href="/">Dashboard</a></li>
         <li><a href="/planner">Planner</a></li>
         <li><a href="/notes">Notes</a></li>
+       
       </ul>
     </nav>
   );
