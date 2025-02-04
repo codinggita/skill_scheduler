@@ -1,84 +1,59 @@
+/* Notes Container */
 .notes-container {
   display: flex;
   height: 100vh;
+  background-color: #f5f5f5;
+  font-family: Arial, sans-serif;
 }
 
+/* Sidebar */
 .notes-sidebar {
-  width: 200px;
-  background: #a7b6c9;
-  padding: 15px;
+  min-width: 250px;
+  margin-top: 1em;
+  margin-left: 0.5em;
+  background-color: #4a627b;
+  padding: 20px;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  border-radius: 0.5em;
 }
 
-.notes-sidebar button {
-  background: none;
-  border: none;
-  color: white;
-  padding: 10px;
-  cursor: pointer;
-  font-size: 16px;
-  text-align: left;
+/* Tab Container */
+.notes-tab-container {
   width: 100%;
-}
-
-.notes-sidebar button:hover,
-.notes-sidebar .active {
-  background: #9eb9c9;
-}
-
-.notes-editor {
-  flex: 2;
-  padding: 20px;
-  background: #f4f4f4;
-}
-
-.notes-editor textarea {
-  width: 100%;
-  height: 100px;
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-}
-
-.notes-editor button {
-  display: block;
-  margin-top: 10px;
-  padding: 10px;
-  background: #008CBA;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-.notes-list {
-  flex: 2;
-  padding: 20px;
-  background: #fff;
-  border-left: 2px solid #ddd;
-}
-
-.notes-list ul {
-  list-style: none;
-  padding: 0;
-}
-
-.notes-list li {
   display: flex;
-  justify-content: space-between;
-  padding: 10px;
-  border-bottom: 1px solid #ccc;
-  cursor: pointer;
+  flex-direction: column;
+  gap: 15px;
 }
 
-.notes-list li:hover {
-  background: #f0f0f0;
+/* Tabs */
+.notes-tab {
+  padding: 12px 15px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  background: #7693af;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background 0.3s ease;
 }
 
-.delete-btn {
-  background: none;
-  border: none;
-  color: red;
-  font-size: 18px;
-  cursor: pointer;
+.notes-tab:hover {
+  background: #1abc9c;
+}
+
+/* Active Tab */
+.notes-tab.active {
+  background: #e74c3c;
+}
+
+/* Content Container */
+.outer-yesterday-container {
+  flex-grow: 1;
+  padding: 20px;
+  background: white;
+  border-left: 2px solid #ccc;
+  overflow-y: auto;
 }

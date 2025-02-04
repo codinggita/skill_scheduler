@@ -1,0 +1,71 @@
+import React, { useState, useEffect } from 'react';
+import '../styling/createnotes.css';
+
+const CreateNotes = () => {
+  const [notes, setNotes] = useState([]);
+  const [noteText, setNoteText] = useState('');
+
+  // Fetch existing notes from API
+  useEffect(() => {
+    fetch('https://skill-scheduler.onrender.com/api/notes/yesterday')
+      .then(response => response.json())
+      .then(data => setNotes(data))
+      .catch(error => console.error('Error fetching notes:', error));
+  }, []);
+
+  // Add a new note
+  const saveNote = () => {
+    if (!noteText.trim()) return;
+
+    fetch('https://skill-scheduler.onrender.com/api/notes/yesterday', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content: noteText }),
+    })
+      .then(response => response.json())
+      .then(data => {
+        setNotes([...notes, data]); // Update UI with new note
+        setNoteText('');
+      })
+      .catch(error => console.error('Error saving note:', error));
+  };
+
+  // Delete a note
+  const deleteNote = (id) => {
+    fetch(`https://skill-scheduler.onrender.com/api/notes/yesterday/${id}`, {
+      method: 'DELETE',
+    })
+      .then(() => {
+        setNotes(notes.filter(note => note._id !== id)); // Remove from UI
+      })
+      .catch(error => console.error('Error deleting note:', error));
+  };
+
+  return (
+    <div className="create-note-container">
+      <h2>Create Your Note</h2>
+
+      {/* Textarea for writing note */}
+      <textarea
+        placeholder="Write your note here..."
+        value={noteText}
+        onChange={(e) => setNoteText(e.target.value)}
+      ></textarea>
+
+      {/* Save Button */}
+      <button onClick={saveNote}>Save Note</button>
+
+      {/* Display Notes */}
+      <ul className="notes-list">
+        {notes.map(note => (
+          <li key={note._id}>
+            <span>{note.content}</span>
+            <button onClick={() => deleteNote(note._id)}>Delete</button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default CreateNotes;
