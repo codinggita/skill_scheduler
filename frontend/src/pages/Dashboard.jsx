@@ -42,6 +42,7 @@ const Dashboard = () => {
       <h1>Welcome to Skill Scheduler</h1>
       <p className="focus-text">Focus Forward</p>
       <div className="dashboard-content">
+        
         {/* Progress Overview Section */}
         <div className="progress-box">
           <h3>Progress Overview</h3>

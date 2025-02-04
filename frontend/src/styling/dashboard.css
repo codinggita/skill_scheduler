@@ -21,7 +21,7 @@
   .progress-box {
     width: 250px;
     padding: 15px;
-    background: white;
+    background: rgb(194, 197, 207);
     border-radius: 10px;
     box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
     text-align: center;
@@ -67,7 +67,7 @@
   .notes-section {
     width: 400px;
     padding: 20px;
-    background: white;
+    background:rgb(194, 197, 207);
     border-radius: 10px;
     box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
     text-align: left;
@@ -77,7 +77,7 @@
   .exam-priority {
     width: 250px;
     padding: 15px;
-    background: white;
+    background: rgb(194, 197, 207);
     border-radius: 10px;
     box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
     text-align: left;

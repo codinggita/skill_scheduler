@@ -1,64 +1,59 @@
-
+/* Notes Container */
 .notes-container {
-    display: flex;
-    height: 100vh; /* Or adjust as needed */
-  }
-  
-  .notes-left {
-    width: 200px; /* Adjust as needed */
-    padding: 20px;
-    border-right: 1px solid #ccc;
-  }
-  
-  .note-categories {
-    margin-top: 20px;
-  }
-  
-  .note-categories p {
-    margin-bottom: 10px;
-    cursor: pointer; /* Make categories clickable if needed */
-  }
-  
-  .notes-center {
-    flex: 1;
-    padding: 20px;
-  }
-  
-  .notes-center textarea {
-    width: 100%;
-    height: 200px; /* Adjust as needed */
-    border: 1px solid #ccc;
-    padding: 10px;
-    font-size: 16px;
-  }
-  
-  .notes-center button {
-    margin-top: 10px;
-    padding: 10px 20px;
-    background-color: #4CAF50; /* Example color */
-    color: white;
-    border: none;
-    cursor: pointer;
-  }
-  
-  .notes-right {
-    width: 300px; /* Adjust as needed */
-    padding: 20px;
-    border-left: 1px solid #ccc;
-    overflow-y: auto; /* Add scrollbar if content overflows */
-  }
-  
-  .notes-right ul {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .notes-right li {
-    border-bottom: 1px solid #ccc;
-    padding: 10px 0;
-    cursor: pointer;
-  }
-  
-  .notes-right h3 {
-    margin-bottom: 5px;
-  }
+  display: flex;
+  height: 100vh;
+  background-color: #f5f5f5;
+  font-family: Arial, sans-serif;
+}
+
+/* Sidebar */
+.notes-sidebar {
+  min-width: 250px;
+  margin-top: 1em;
+  margin-left: 0.5em;
+  background-color: #4a627b;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 0.5em;
+}
+
+/* Tab Container */
+.notes-tab-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Tabs */
+.notes-tab {
+  padding: 12px 15px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  background: #7693af;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background 0.3s ease;
+}
+
+.notes-tab:hover {
+  background: #1abc9c;
+}
+
+/* Active Tab */
+.notes-tab.active {
+  background: #e74c3c;
+}
+
+/* Content Container */
+.outer-yesterday-container {
+  flex-grow: 1;
+  padding: 20px;
+  background: white;
+  border-left: 2px solid #ccc;
+  overflow-y: auto;
+}
