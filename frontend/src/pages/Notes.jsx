@@ -1,20 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import '../styling/notes.css';
 
+
+// const cloudinary = require('cloudinary');
+
+// cloudinary.v2.config({
+//   cloud_name: 'dnfqhhyoo',
+//   api_key: '188198583196523',
+//   api_secret: 'pwRFYK025lbtMCCc2-8WRaJPL_s',
+//   secure: true,
+// });
+
 const Notes = () => {
+  const categories = [
+    { name: "Yesterday's Notes", api: "yesterday" },
+    { name: "Revision Notes", api: "revision" },
+    { name: "Quiz Notes", api: "quiz" },
+    { name: "Improvements", api: "improvements" }
+  ];
+
   const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState('');
   const [selectedNote, setSelectedNote] = useState(null);
-  const [categories, setCategories] = useState(['Revision Notes', 'Quiz Notes', 'Improvements']);
-  const [selectedCategory, setSelectedCategory] = useState(null); // Track selected category
+  const [selectedCategory, setSelectedCategory] = useState(categories[0]); // Default to Yesterday's Notes
 
   useEffect(() => {
     fetchNotes();
-  }, []);
+  }, [selectedCategory]); // Fetch notes when category changes
 
+  // Fetch notes based on selected category
   const fetchNotes = async () => {
     try {
-      const response = await fetch('https://skill-scheduler.onrender.com/api/notes');
+      const response = await fetch(`https://skill-scheduler.onrender.com/api/notes/${selectedCategory.api}`);
       const data = await response.json();
       setNotes(data);
     } catch (error) {
@@ -22,25 +39,20 @@ const Notes = () => {
     }
   };
 
+  // Add a new note
   const addNote = async () => {
     if (newNote.trim() === '') return;
 
     try {
-      const response = await fetch('https://skill-scheduler.onrender.com/api/notes', {
+      const response = await fetch(`https://skill-scheduler.onrender.com/api/notes/${selectedCategory.api}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          content: newNote, 
-          category: selectedCategory || 'General' // Include category in the request
-        }), 
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: newNote })
       });
 
       if (response.ok) {
         setNewNote('');
-        setSelectedCategory(null); // Reset selected category
-        fetchNotes();
+        fetchNotes(); // Fetch updated notes immediately
       } else {
         console.error('Error adding note:', response.status);
       }
@@ -49,23 +61,21 @@ const Notes = () => {
     }
   };
 
+  // Edit an existing note
   const editNote = async () => {
     if (!selectedNote) return;
 
     try {
-      const response = await fetch(`https://skill-scheduler.onrender.com/api/notes/${selectedNote._id}`, {
-        method: 'PUT', // Or PATCH, depending on your API
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ content: newNote, category: selectedCategory }),
+      const response = await fetch(`https://skill-scheduler.onrender.com/api/notes/${selectedCategory.api}/${selectedNote._id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: newNote })
       });
 
       if (response.ok) {
         setNewNote('');
         setSelectedNote(null);
-        setSelectedCategory(null); // Reset selected category
-        fetchNotes();
+        fetchNotes(); // Refresh notes
       } else {
         console.error('Error editing note:', response.status);
       }
@@ -74,62 +84,73 @@ const Notes = () => {
     }
   };
 
+  // Delete a note
+  const deleteNote = async (id) => {
+    try {
+      const response = await fetch(`https://skill-scheduler.onrender.com/api/notes/${selectedCategory.api}/${id}`, {
+        method: 'DELETE'
+      });
+
+      if (response.ok) {
+        fetchNotes(); // Refresh notes after deletion
+      } else {
+        console.error('Error deleting note:', response.status);
+      }
+    } catch (error) {
+      console.error('Error deleting note:', error);
+    }
+  };
+
+  // Handle note selection for editing
   const handleNoteClick = (note) => {
     setSelectedNote(note);
     setNewNote(note.content);
-    setSelectedCategory(note.category); // Set selected category for editing
   };
-
-  const handleCategoryClick = (category) => {
-    setSelectedCategory(category);
-  };
-
-  const filterNotesByCategory = () => {
-    if (!selectedCategory) return notes;
-    return notes.filter(note => note.category === selectedCategory);
-  };
-
-  const filteredNotes = filterNotesByCategory(); // Filter notes based on category
 
   return (
     <div className="notes-container">
-      <div className="notes-left">
-        <h2>Yesterday's Notes</h2>
-        <div className="note-categories">
-          {categories.map(category => (
-            <p 
-              key={category} 
-              className={selectedCategory === category ? 'selected' : ''} // Apply 'selected' class
-              onClick={() => handleCategoryClick(category)}
-            >
-              {category}
-            </p>
-          ))}
-        </div>
+      {/* Sidebar Navigation */}
+      <div className="notes-sidebar">
+        {categories.map((category) => (
+          <button
+            key={category.api}
+            className={selectedCategory.api === category.api ? 'active' : ''}
+            onClick={() => setSelectedCategory(category)}
+          >
+            {category.name}
+          </button>
+        ))}
       </div>
 
-      <div className="notes-center">
-        <h2>Take your notes here</h2>
+      {/* Notes Editor */}
+      <div className="notes-editor">
+        <h2>{selectedCategory.name}</h2>
         <textarea
           value={newNote}
           onChange={(e) => setNewNote(e.target.value)}
-          placeholder="Start typing your notes..."
+          placeholder="Write your notes here..."
         />
         <button onClick={selectedNote ? editNote : addNote}>
           {selectedNote ? 'Edit Note' : 'Add Note'}
         </button>
       </div>
 
-      <div className="notes-right">
-        <h2>Notes</h2>
-        <ul>
-          {filteredNotes.map((note) => ( // Render filtered notes
-            <li key={note._id} onClick={() => handleNoteClick(note)}>
-              <h3>{note.title || 'Untitled Note'}</h3>
-              <p>{note.content.slice(0, 50)}...</p>
-            </li>
-          ))}
-        </ul>
+      {/* Notes List */}
+      <div className="notes-list">
+        <h2>Saved Notes</h2>
+        {notes.length === 0 ? <p>No notes available.</p> : (
+          <ul>
+            {notes.map((note) => (
+              <li key={note._id}>
+                <div onClick={() => handleNoteClick(note)}>
+                  <h3>{note.title || 'Untitled'}</h3>
+                  <p>{note.content.slice(0, 50)}...</p>
+                </div>
+                <button className="delete-btn" onClick={() => deleteNote(note._id)}>delete</button>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
   );
