@@ -7,7 +7,6 @@ const port = 3000;
 
 // MongoDB connection details
 const uri = "mongodb+srv://ishitatrivedi2401:ishitatrivedi061106@cluster0.j2rs8.mongodb.net/";
-
 const dbName = "skill_scheduler";
 
 // Middleware
@@ -25,24 +24,24 @@ const { router: quizzesRouter, initializeCollections: initializeQuizzes } = requ
 // Connect to MongoDB and initialize collections
 async function initializeDatabase() {
     try {
-        const client = await MongoClient.connect(uri, { useUnifiedTopology: true });
+        const client = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
         console.log("✅ Connected to MongoDB");
 
         db = client.db(dbName);
 
-        // Initialize collections
+        // ✅ Initialize collections properly
         initializeDashboard(db);
         initializeNotes(db);
-        initializePlanner(db); // Ensures planner, exams, and studyPlanner collections are set up
+        initializePlanner(db);
         initializeQuizzes(db);
 
-        // Register routes
+        // ✅ Register API routes
         app.use('/api/dashboard', dashboardRouter);
         app.use('/api/notes', notesRouter);
         app.use('/api/planner', plannerRouter);
         app.use('/api/quizzes', quizzesRouter);
 
-        // Start the server
+        // ✅ Start the server
         app.listen(port, () => {
             console.log(`🚀 Server running at http://localhost:${port}`);
         });
@@ -52,5 +51,5 @@ async function initializeDatabase() {
     }
 }
 
-// Start Database Initialization
+// ✅ Start Database Initialization
 initializeDatabase();

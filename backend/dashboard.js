@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { ObjectId } = require('mongodb');
 
-// MongoDB connection (this will be initialized in server.js)
+// MongoDB connection (initialized in server.js)
 let db;
 let plannerCollection;
 let notesCollection;
@@ -16,14 +16,22 @@ const initializeCollections = (database) => {
     notesCollection = db.collection('notes');
 };
 
-// GET: Dashboard data
+// ✅ GET: Dashboard Data (User-Specific)
 router.get('/dashboard', async (req, res) => {
-    try {
-        const totalTasks = await plannerCollection.countDocuments();
-        const completedTasks = await plannerCollection.countDocuments({ status: "Completed" });
+    const { userId } = req.query;
+    if (!userId) return res.status(400).json({ error: "User ID is required" });
 
-        const taskCompletionPercentage = ((completedTasks / totalTasks) * 100).toFixed(2);
-        const notesOverview = await notesCollection.find({}, { projection: { id: 1, title: 1, content: 1, createdAt: 1 } }).toArray();
+    try {
+        const totalTasks = await plannerCollection.countDocuments({ userId });
+        const completedTasks = await plannerCollection.countDocuments({ userId, status: "Completed" });
+
+        const taskCompletionPercentage = totalTasks > 0 
+            ? ((completedTasks / totalTasks) * 100).toFixed(2)
+            : 0;
+
+        const notesOverview = await notesCollection
+            .find({ userId }, { projection: { id: 1, title: 1, content: 1, createdAt: 1 } })
+            .toArray();
 
         res.status(200).json({
             progressReport: {
@@ -38,9 +46,13 @@ router.get('/dashboard', async (req, res) => {
     }
 });
 
+// ✅ GET: User Progress
 router.get('/progress', async (req, res) => {
+    const { userId } = req.query;
+    if (!userId) return res.status(400).json({ error: "User ID is required" });
+
     try {
-        const progressData = await dashboardCollection.findOne({ type: "progress" });
+        const progressData = await dashboardCollection.findOne({ userId, type: "progress" });
         if (!progressData) return res.status(404).send("No progress data found");
 
         res.status(200).json(progressData);
@@ -49,9 +61,34 @@ router.get('/progress', async (req, res) => {
     }
 });
 
-router.get('/notes-overview', async (req, res) => {
+// ✅ POST: Add User Progress
+router.post("/api/progress", async (req, res) => {
     try {
-        const notesOverview = await dashboardCollection.findOne({ type: "notes-overview" });
+        const { userId, progressArray } = req.body;
+        if (!userId || !Array.isArray(progressArray)) {
+            return res.status(400).json({ message: "User ID and progress array are required" });
+        }
+
+        const progressWithUser = progressArray.map(progress => ({
+            ...progress,
+            userId
+        }));
+
+        const result = await dashboardCollection.insertMany(progressWithUser);
+        res.status(201).json({ message: "Progress records added successfully", insertedCount: result.insertedCount });
+    } catch (error) {
+        console.error("Error adding progress:", error);
+        res.status(500).json({ message: "Error adding progress" });
+    }
+});
+
+// ✅ GET: Notes Overview (User-Specific)
+router.get('/notes-overview', async (req, res) => {
+    const { userId } = req.query;
+    if (!userId) return res.status(400).json({ error: "User ID is required" });
+
+    try {
+        const notesOverview = await dashboardCollection.findOne({ userId, type: "notes-overview" });
         if (!notesOverview) return res.status(404).send("No notes overview found");
 
         res.status(200).json(notesOverview);
@@ -60,10 +97,34 @@ router.get('/notes-overview', async (req, res) => {
     }
 });
 
-// ✅ GET: Fetch Upcoming Exam Dates
-router.get('/upcoming-exams', async (req, res) => {
+// ✅ POST: Add Notes Overview
+router.post("/api/notes-overview", async (req, res) => {
     try {
-        const exams = await dashboardCollection.find({ type: "exam-date" }).toArray();
+        const { userId, notesArray } = req.body;
+        if (!userId || !Array.isArray(notesArray)) {
+            return res.status(400).json({ message: "User ID and notes array are required" });
+        }
+
+        const notesWithUser = notesArray.map(note => ({
+            ...note,
+            userId
+        }));
+
+        const result = await dashboardCollection.insertMany(notesWithUser);
+        res.status(201).json({ message: "Notes overview added successfully", insertedCount: result.insertedCount });
+    } catch (error) {
+        console.error("Error adding notes overview:", error);
+        res.status(500).json({ message: "Error adding notes overview" });
+    }
+});
+
+// ✅ GET: Upcoming Exam Dates (User-Specific)
+router.get('/upcoming-exams', async (req, res) => {
+    const { userId } = req.query;
+    if (!userId) return res.status(400).json({ error: "User ID is required" });
+
+    try {
+        const exams = await dashboardCollection.find({ userId, type: "exam-date" }).toArray();
         if (!exams.length) return res.status(404).send("No upcoming exams found");
 
         res.status(200).json(exams);
@@ -72,17 +133,5 @@ router.get('/upcoming-exams', async (req, res) => {
     }
 });
 
-// ✅ POST: Add Progress Data (For Testing)
-router.post('/progress', async (req, res) => {
-    try {
-        const progressData = req.body;
-        const result = await dashboardCollection.insertOne(progressData);
-        res.status(201).send(`Progress added with ID: ${result.insertedId}`);
-    } catch (err) {
-        res.status(500).send("Error adding progress: " + err.message);
-    }
-});
-
-// Export the router and the initializeCollections function
+// ✅ Export Router & Initialize Collections
 module.exports = { router, initializeCollections };
-
