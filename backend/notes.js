@@ -69,7 +69,6 @@ router.delete("/yesterday/:id", async (req, res) => {
     }
 });
 
-/* -------------- Revision Notes -------------- */
 
 // ✅ GET: Fetch All Revision Notes
 router.get("/revision", async (req, res) => {
@@ -115,7 +114,6 @@ router.delete("/revision/:id", async (req, res) => {
     }
 });
 
-/* -------------- Quiz Notes -------------- */
 
 // ✅ GET: Fetch All Quiz Notes
 router.get("/quizzes", async (req, res) => {
@@ -161,7 +159,6 @@ router.delete("/quizzes/:id", async (req, res) => {
     }
 });
 
-/* -------------- Improvement Notes -------------- */
 
 // ✅ GET: Fetch All Improvement Notes
 router.get("/improvements", async (req, res) => {
