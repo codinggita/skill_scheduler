@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "../styling/dashboard.css"; // Make sure to create and style this CSS file
+import "../styling/dashboard.css"; 
 
 const Dashboard = () => {
   const [progress, setProgress] = useState(0);
@@ -8,28 +8,29 @@ const Dashboard = () => {
   const [notes, setNotes] = useState([]);
   const [upcomingExams, setUpcomingExams] = useState([]);
 
-  // Fetch Progress Overview
+  // ✅ Fetch Progress Overview
   useEffect(() => {
     fetch("https://skill-scheduler.onrender.com/api/dashboard/progress")
       .then((response) => response.json())
       .then((data) => {
         setProgress(data.completion || 0);
         setStudyHours(data.studiedHours || 0);
-        console.log(data);
         setQuizProgress(data.quizProgress || 0);
       })
       .catch((error) => console.error("Error fetching progress:", error));
   }, []);
 
-  // Fetch Notes Overview
+  // ✅ Fetch Notes Overview
   useEffect(() => {
     fetch("https://skill-scheduler.onrender.com/api/dashboard/dashboard")
       .then((response) => response.json())
-      .then((data) => setNotes(data.notesOverview || []))
+      .then((data) => {
+        setNotes(data.notesOverview || []);
+      })
       .catch((error) => console.error("Error fetching notes:", error));
   }, []);
 
-  // Fetch Upcoming Exams
+  // ✅ Fetch Upcoming Exams
   useEffect(() => {
     fetch("https://skill-scheduler.onrender.com/api/dashboard/upcoming-exams")
       .then((response) => response.json())
@@ -43,7 +44,7 @@ const Dashboard = () => {
       <p className="focus-text">Focus Forward</p>
       <div className="dashboard-content">
         
-        {/* Progress Overview Section */}
+        {/* ✅ Progress Overview Section */}
         <div className="progress-box">
           <h3>Progress Overview</h3>
           <div className="progress-circle">
@@ -58,7 +59,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Notes Overview Section */}
+        {/* ✅ Notes Overview Section */}
         <div className="notes-section">
           <h3>Points from Notes</h3>
           {notes.length > 0 ? (
@@ -70,13 +71,17 @@ const Dashboard = () => {
           )}
         </div>
 
-        {/* Exam Priority Section */}
+        {/* ✅ Exam Priority Section */}
         <div className="exam-priority">
           <h3>Exam Priority</h3>
           <ul>
-            {upcomingExams.map((exam, index) => (
-              <li key={index}>{exam.subject} - {exam.date}</li>
-            ))}
+            {upcomingExams.length > 0 ? (
+              upcomingExams.map((exam, index) => (
+                <li key={index}>{exam.subject} - {exam.date}</li>
+              ))
+            ) : (
+              <p>No upcoming exams.</p>
+            )}
           </ul>
         </div>
       </div>
@@ -85,4 +90,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-

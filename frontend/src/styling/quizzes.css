@@ -1,0 +1,116 @@
+
+
+/* Main Quiz Container */
+.quiz-container {
+    background: #ffffff;
+    width: 90%;
+    max-width: 600px;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Quiz Title */
+.quiz-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #2c3e50;
+}
+
+/* No Quiz Message */
+.no-quiz-message {
+    font-size: 18px;
+    font-weight: 500;
+    color: #e74c3c;
+    background: #f8d7da;
+    padding: 10px;
+    border-radius: 6px;
+    margin-top: 15px;
+}
+
+/* Quiz List */
+.quiz-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.quiz-item {
+    background: #ecf0f1;
+    padding: 15px;
+    border-radius: 10px;
+    margin: 10px 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: left;
+}
+
+/* Question Text */
+.quiz-item p {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+/* Options Styling */
+.quiz-item label {
+    display: block;
+    padding: 8px;
+    background: #fff;
+    border-radius: 6px;
+    margin: 5px 0;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.quiz-item input[type="radio"] {
+    margin-right: 10px;
+}
+
+/* Hover Effect on Options */
+.quiz-item label:hover {
+    background: #d5f5e3;
+    transform: scale(1.02);
+}
+
+/* Buttons */
+.start-btn,
+.submit-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s ease;
+    margin-top: 10px;
+}
+
+/* Start Quiz Button */
+.start-btn {
+    background: #3498db;
+}
+
+.start-btn:hover {
+    background: #2980b9;
+}
+
+/* Submit Quiz Button */
+.submit-btn {
+    background: #2ecc71;
+}
+
+.submit-btn:hover {
+    background: #27ae60;
+}
+
+/* Time Taken Message */
+.time-taken {
+    font-size: 16px;
+    font-weight: bold;
+    color: #e67e22;
+    margin-top: 15px;
+}
