@@ -7,7 +7,7 @@ const StudyPlanner = () => {
 
   // Fetch exam details from API
   useEffect(() => {
-    fetch("https://skill-scheduler.onrender.com/api/planner/exams")
+    fetch("http://localhost:3000/api/planner/exams")
       .then((res) => res.json())
       .then((data) => setExams(data))
       .catch((err) => console.error("Error fetching exams:", err));
@@ -21,6 +21,8 @@ const StudyPlanner = () => {
   // Add new exam
   const handleAddExam = (e) => {
     e.preventDefault();
+    setNewExam({ ...newExam, date: new Date(newExam.date).toISOString()})
+    console.log(newExam)
     fetch("https://skill-scheduler.onrender.com/api/planner/exams", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

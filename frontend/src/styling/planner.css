@@ -6,6 +6,7 @@
     max-width: 100vw;
     overflow-x: hidden;
     background-color: #ddd;
+    font-family: Arial, sans-serif;;
   }
   
   /* Sidebar */
@@ -23,12 +24,13 @@
   }
 
   .outer-todo-container{
-    width: 75%;
+    width: 100%;
   }
   
   .menu {
     width: 100%;
     margin-top: 2em;
+    gap: 0.5em;
   }
   
   .menu-item {
@@ -40,6 +42,8 @@
     border-radius: 5px;
     font-size: 1.5em;
     margin-top: 30px;
+    transition: background 0.4s ease;
+    
   }
   
   .menu-item.active,

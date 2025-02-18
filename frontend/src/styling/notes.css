@@ -2,7 +2,8 @@
 .notes-container {
   display: flex;
   height: 100vh;
-  background-color: #f5f5f5;
+  background-color: hsl(0, 0%, 88%);
+  gap: 2em;
   font-family: Arial, sans-serif;
 }
 
@@ -22,32 +23,35 @@
 /* Tab Container */
 .notes-tab-container {
   width: 100%;
+  height: 100%;
+  margin-top: 2em;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 0.5em;
 }
 
 /* Tabs */
 .notes-tab {
-  padding: 12px 15px;
-  text-align: center;
-  font-size: 16px;
-  font-weight: bold;
-  color: white;
-  background: #7693af;
-  cursor: pointer;
-  border-radius: 5px;
-  transition: background 0.3s ease;
+     padding: 10px;
+    color: white;
+    text-align: center;
+    margin: 5px 0;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 1.5em;
+    margin-top: 30px;
+    transition: background 0.4s ease;
 }
 
 .notes-tab:hover {
-  background: #1abc9c;
+  background: #3ee2c1;
 }
 
-/* Active Tab */
-.notes-tab.active {
-  background: #e74c3c;
-}
+.notes-tab.active,
+  .notes-tab:hover {
+    background-color: #7c8c92;
+  }
+  
 
 /* Content Container */
 .outer-yesterday-container {

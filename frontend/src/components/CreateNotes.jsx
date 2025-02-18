@@ -16,6 +16,7 @@ const CreateNotes = () => {
   // Add a new note
   const saveNote = () => {
     if (!noteText.trim()) return;
+     // This line checks if the noteText (the content of the note) is empty or only whitespace. If it is, the function exits early and doesn’t proceed with saving the note.// 
 
     fetch('https://skill-scheduler.onrender.com/api/notes/yesterday', {
       method: 'POST',
@@ -47,7 +48,7 @@ const CreateNotes = () => {
 
       {/* Textarea for writing note */}
       <textarea
-        placeholder="Write your note here..."
+        placeholder="Write your notes here..."
         value={noteText}
         onChange={(e) => setNoteText(e.target.value)}
       ></textarea>
@@ -60,7 +61,7 @@ const CreateNotes = () => {
         {notes.map(note => (
           <li key={note._id}>
             <span>{note.content}</span>
-            <button onClick={() => deleteNote(note._id)}>Delete</button>
+            <button onClick={() => deleteNote(note._id)}>🗑️</button>
           </li>
         ))}
       </ul>
