@@ -4,7 +4,7 @@ import '../styling/createnotes.css';
 const CreateNotes = () => {
   const [notes, setNotes] = useState([]);
   const [noteText, setNoteText] = useState('');
-
+  const [expandedNoteId, setExpandedNoteId] = useState(null); // Track expanded note
   // Fetch existing notes from API
   useEffect(() => {
     fetch('https://skill-scheduler.onrender.com/api/notes/yesterday')
@@ -42,6 +42,10 @@ const CreateNotes = () => {
       .catch(error => console.error('Error deleting note:', error));
   };
 
+  const toggleNote = (id) => {
+    setExpandedNoteId(expandedNoteId === id ? null : id);
+  };
+
   return (
     <div className="create-note-container">
       <h2>Create Your Note</h2>
@@ -60,7 +64,11 @@ const CreateNotes = () => {
       <ul className="notes-list">
         {notes.map(note => (
           <li key={note._id}>
-            <span>{note.content}</span>
+            <pre className="note-content" onClick={() => toggleNote(note._id)}>
+              {expandedNoteId === note._id
+                ? note.content // Show full content if expanded
+                : `${note.content.split('\n')[0].slice(0, 50)}...`} {/* Show preview */}
+            </pre>
             <button onClick={() => deleteNote(note._id)}>🗑️</button>
           </li>
         ))}

@@ -65,4 +65,14 @@
   .notes-list li button:hover {
     background-color: #880a0a;
   }
-  
+  .note-content {
+    white-space: pre-line;
+    font-family: inherit;
+    font-size: 1rem;
+    line-height: 1.5;
+    cursor: pointer;
+}
+
+.note-content:hover {
+    text-decoration: underline;
+}

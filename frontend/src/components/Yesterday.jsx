@@ -5,6 +5,7 @@ const Yesterday = () => {
   const [newNote, setNewNote] = useState('');
   const [editingNote, setEditingNote] = useState(null);
   const [editedContent, setEditedContent] = useState('');
+  const [expandedNoteId, setExpandedNoteId] = useState(null); // Track expanded note
 
   // Fetch all Yesterday notes
   useEffect(() => {
@@ -58,6 +59,9 @@ const Yesterday = () => {
       .catch(error => console.error('Error deleting note:', error));
   };
 
+  const toggleNote = (id) => {
+    setExpandedNoteId(expandedNoteId === id ? null : id);
+  };
   return (
     <div className="yesterday-container">
       <h2>Yesterday's Notes</h2>
@@ -89,7 +93,11 @@ const Yesterday = () => {
               </>
             ) : (
               <>
-                <span>{note.content}</span>
+                <pre className="note-content" onClick={() => toggleNote(note._id)}>
+              {expandedNoteId === note._id
+                ? note.content // Show full content if expanded
+                : `${note.content.split('\n')[0].slice(0, 50)}...`} {/* Show preview */}
+            </pre>
                 <button onClick={() => { setEditingNote(note._id); setEditedContent(note.content); }}>Edit</button>
                 <button onClick={() => deleteNote(note._id)}>Delete</button>
               </>

@@ -18,7 +18,6 @@ const Notes = () => {
         <div className={`notes-tab ${tabstate1 === "CreateNotes" && "active"}`} onClick={() => settabstate1("CreateNotes")}>Notes</div>
         <div className={`notes-tab ${tabstate1 === "Yesterday" && "active"}`} onClick={() => settabstate1("Yesterday")}>Yesterday</div>
         <div className={`notes-tab ${tabstate1 === "Revision" && "active"}`} onClick={() => settabstate1("Revision")}>Revision</div>
-        <div className={`notes-tab ${tabstate1 === "Quizz" && "active"}`} onClick={() => settabstate1("Quizz")}>Quizz</div>
         <div className={`notes-tab ${tabstate1 === "Improvements" && "active"}`} onClick={() => settabstate1("Improvements")}>Improvements</div>
      </div>
       </div>
@@ -32,9 +31,6 @@ const Notes = () => {
       }
       {
         (tabstate1=="Revision")?<Revision />:""
-      }
-      {
-        (tabstate1=="Quizz")?<Quizz/>:""
       }
       {
         (tabstate1=="Improvements")?<Improvements />:""
