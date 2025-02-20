@@ -5,6 +5,7 @@
     background: #f9f9f9;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
   }
   
   h2 {
@@ -26,6 +27,7 @@
     border-radius: 5px;
     font-size: 16px;
     resize: none;
+    font-family: Arial, sans-serif;
   }
   
   .save-btn {
@@ -65,8 +67,8 @@
     gap: 5px;
   }
   
-  .edit-btn, .delete-btn, .cancel-btn {
-    background: #ff6b6b;
+  .edit-btn, .delete-btn {
+    background: #cc7474;
     color: white;
     border: none;
     padding: 5px 10px;
@@ -74,10 +76,6 @@
     cursor: pointer;
     border-radius: 3px;
     transition: 0.3s;
-  }
-  
-  .edit-btn {
-    background: #ffc107;
   }
   
   .edit-btn:hover {
@@ -88,11 +86,4 @@
     background: #e63946;
   }
   
-  .cancel-btn {
-    background: #6c757d;
-  }
-  
-  .cancel-btn:hover {
-    background: #5a6268;
-  }
   
