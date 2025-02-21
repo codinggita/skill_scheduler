@@ -4,7 +4,6 @@ import '../styling/createnotes.css';
 const CreateNotes = () => {
   const [notes, setNotes] = useState([]);
   const [noteText, setNoteText] = useState('');
-  const [expandedNoteId, setExpandedNoteId] = useState(null); // Track expanded note
 
   // Fetch existing notes from API
   useEffect(() => {
