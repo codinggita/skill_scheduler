@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard.jsx";
 import Planner from "./pages/Planner.jsx"; 
 import Notes from "./pages/Notes.jsx"; 
 import QuizSection from "./pages/Quizzes.jsx";
+import Footer from "./pages/Footer.jsx"
 
 
 const App = () => {
@@ -17,6 +18,7 @@ const App = () => {
         <Route path="/notes" element={<Notes />} />   
         <Route path="/quizz" element={<QuizSection />} />     
       </Routes>
+      <Footer/>
     </Router>
   );
 };

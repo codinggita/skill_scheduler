@@ -1,10 +1,12 @@
 .revision-notes-container {
-    max-width: 600px;
-    margin: 20px auto;
+    max-width: 2000px;
+    
+    margin: 70px auto;
     padding: 20px;
     background: #f9f9f9;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    
   }
   
   h2 {
@@ -21,7 +23,7 @@
   textarea {
     width: 100%;
     height: 80px;
-    padding: 10px;
+    padding: 9px;
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 16px;
@@ -88,11 +90,5 @@
     background: #e63946;
   }
   
-  .cancel-btn {
-    background: #6c757d;
-  }
   
-  .cancel-btn:hover {
-    background: #5a6268;
-  }
   
