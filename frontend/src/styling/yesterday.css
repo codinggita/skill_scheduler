@@ -1,110 +1,147 @@
-/* Container */
+/* Container styling for Yesterday component */
 .yesterday-container {
-  max-width: 100vw;
-  max-height: 100vh;
-  background: #ffffff;
+  max-width: 600px;
+  margin: 20px auto;
+  background-color: #ffffff;
   border-radius: 8px;
-  box-shadow: 0px 4px 8px rgba(1, 0, 0, 0.1);
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Heading */
+/* Heading styling */
 .yesterday-container h2 {
   text-align: center;
   color: #333;
   margin-bottom: 20px;
 }
 
-/* Input and Button Container */
-.yesterday-container div {
+/* Add note container (first div inside the container) */
+.yesterday-container > div {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  gap: 10px;
   margin-bottom: 20px;
 }
 
-/* Input Field */
-.yesterday-container input {
-  width: 99%;
+/* Add note input field */
+.yesterday-container > div input {
+  flex: 1;
   padding: 10px;
+  font-size: 16px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  font-size: 16px;
   outline: none;
 }
 
-/* Button */
-.yesterday-container button {
-  width: 9%;
-  padding: 10px;
+/* Add note button */
+.yesterday-container > div button {
+  padding: 10px 20px;
   background-color: #29547c;
-  color: white;
-  border: 0.5px solid black;
+  color: #fff;
+  border: none;
   border-radius: 5px;
   cursor: pointer;
-  transition: 0.3s;
-  
+  transition: background-color 0.3s ease;
 }
 
-.yesterday-container button:hover {
+.yesterday-container > div button:hover {
   background-color: #5e86a1;
 }
 
-/* Notes List */
+/* Notes list styling */
 .yesterday-container ul {
   list-style: none;
   padding: 0;
-  margin-top: 20px;
+  margin: 0;
 }
 
-/* Notes List Items */
-.yesterday-container li {
-  background: #7299bd;
-  width: 100%;
-  margin-bottom: 10px;
-  padding: 10px;
-  border-radius: 10px;
+/* Each note list item */
+.yesterday-container ul li {
+  background-color: #f0f4f8;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
 }
 
-/* Buttons inside list items */
-.yesterday-container li button {
-  padding: 5px 10px;
-  font-size: 14px;
-  border-radius: 5px;
+/* Note content styling (when not editing) */
+.yesterday-container ul li .note-content {
+  margin-bottom: 10px;
   cursor: pointer;
-  transition: 0.3s;
-  
+  white-space: pre-wrap;
 }
 
-/* Edit Button */
-.yesterday-container li button:nth-child(2) {
-  background-color: #2ecc71;
-  margin-left: 65em;
+/* Editing mode: input field styling for editing a note */
+.yesterday-container ul li input[type="text"] {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  width: 100%;
+  outline: none;
+}
+
+/* === Buttons in Non-Editing Mode === */
+/* Using the sibling selector on the <pre> element */
+.yesterday-container ul li pre + button {
+  background-color: #2ecc71;  /* Edit button style */
   color: white;
   border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-right: 10px;
 }
 
-.yesterday-container li button:nth-child(2):hover {
+.yesterday-container ul li pre + button:hover {
   background-color: #27ae60;
 }
 
-/* Delete Button */
-.yesterday-container li button:nth-child(3) {
-  background-color: #880a0a;
+.yesterday-container ul li pre + button + button {
+  background-color: #e74c3c;  /* Delete button style */
   color: white;
   border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.yesterday-container li button:nth-child(3):hover {
+.yesterday-container ul li pre + button + button:hover {
   background-color: #c0392b;
 }
 
-/* Input when Editing */
-.yesterday-container li input {
-  padding: 5px;
-  font-size: 14px;
-  border: 1px solid #ccc;
+/* === Buttons in Editing Mode === */
+/* When an input is present, the buttons following it are for editing */
+/* The first button will be "Save" */
+.yesterday-container ul li input + button {
+  background-color: #29547c;  /* Save button style */
+  color: white;
+  border: none;
+  padding: 5px 10px;
   border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-right: 10px;
+}
+
+.yesterday-container ul li input + button:hover {
+  background-color: #5e86a1;
+}
+
+/* The second button will be "Cancel" */
+.yesterday-container ul li input + button + button {
+  background-color: #95a5a6;  /* Cancel button style */
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.yesterday-container ul li input + button + button:hover {
+  background-color: #7f8c8d;
 }

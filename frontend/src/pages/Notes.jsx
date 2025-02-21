@@ -4,7 +4,6 @@ import '../styling/notes.css';
 import CreateNotes from '../components/CreateNotes.jsx'  // import the component to be rendered in the notes tab
 import Yesterday from '../components/Yesterday.jsx'
 import  Revision from  '../components/Revision.jsx'
-import  Quizz from'../components/Quizz.jsx'
 import  Improvements from '../components/Improvements.jsx'
 
 const Notes = () => {
@@ -17,7 +16,6 @@ const Notes = () => {
         <div className={`notes-tab ${tabstate1 === "CreateNotes" && "active"}`} onClick={() => settabstate1("CreateNotes")}>Notes</div>
         <div className={`notes-tab ${tabstate1 === "Yesterday" && "active"}`} onClick={() => settabstate1("Yesterday")}>Yesterday</div>
         <div className={`notes-tab ${tabstate1 === "Revision" && "active"}`} onClick={() => settabstate1("Revision")}>Revision</div>
-        <div className={`notes-tab ${tabstate1 === "Quizz" && "active"}`} onClick={() => settabstate1("Quizz")}>Quizz</div>
         <div className={`notes-tab ${tabstate1 === "Improvements" && "active"}`} onClick={() => settabstate1("Improvements")}>Improvements</div>
      </div>
       </div>
@@ -31,9 +29,6 @@ const Notes = () => {
       }
       {
         (tabstate1=="Revision")?<Revision />:""
-      }
-      {
-        (tabstate1=="Quizz")?<Quizz/>:""
       }
       {
         (tabstate1=="Improvements")?<Improvements />:""

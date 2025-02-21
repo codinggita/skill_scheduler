@@ -5,7 +5,10 @@
     align-items: center;
     background-color: #4a627b;
     padding: 15px 20px;
-    color: white;
+    color:#f39c12;
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
 .logo {
@@ -18,7 +21,7 @@
     list-style: none;
     display: flex;
     margin-right: 25em;
-    gap:100px;
+    gap: 100px;
 }
 
 .nav-links li {
@@ -27,12 +30,41 @@
 
 .nav-links a {
     text-decoration: none;
-    color: rgb(202, 202, 202);
+    color:#f39c12;
     font-size: 25px;
-    transition: 0.3s;
+    transition: color 0.3s ease-in-out;
 }
 
 .nav-links a:hover {
-    color: #f39c12;
+    color: #ffffff;
 }
 
+/* Responsive design */
+@media screen and (max-width: 768px) {
+    .nav-links {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        margin-right: 0;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: #4a627b;
+        transform: translateY(-100%);
+        transition: transform 0.3s ease-in-out;
+        z-index: 1;
+    }
+
+    .nav-links.open {
+        transform: translateY(0);
+    }
+
+    .nav-links li {
+        display: block;
+    }
+
+    .nav-links a {
+        font-size: 20px;
+    }
+}
