@@ -4,7 +4,7 @@ import '../styling/notes.css';
 import CreateNotes from '../components/CreateNotes.jsx'  // import the component to be rendered in the notes tab
 import Yesterday from '../components/Yesterday.jsx'
 import  Revision from  '../components/Revision.jsx'
-import  Quizz from'../components/Quizz.jsx'
+
 import  Improvements from '../components/Improvements.jsx'
 
 const Notes = () => {

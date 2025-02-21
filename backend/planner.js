@@ -66,13 +66,30 @@ router.delete("/to-do/:id", async (req, res) => {
 /* -------------- Exam Dates, Subjects, and Pending Work -------------- */
 
 // ✅ GET: Fetch All Exams
+
 router.get("/exams", async (req, res) => {
-    try {
-        const exams = await examsCollection.find().toArray();
-        res.status(200).json(exams);
-    } catch (err) {
-        res.status(500).send("Error fetching exams: " + err.message);
+    const limit = parseInt(req.query.limit);
+
+    if(limit == NaN) {
+        try {
+            const exams = await examsCollection.find().sort({ date : 1 }).toArray();
+            res.status(200).json(exams);
+        } catch (err) {
+            res.status(500).send("Error fetching exams: " + err.message);
+        }
+    }else {
+        try {
+            const firstExams = await examsCollection
+            .find({})
+            .sort({ date: 1 }) // Sort by date in ascending order
+            .limit(limit) // Limit results dynamically
+            .toArray();
+            res.status(200).json(firstExams);
+        } catch (error) {
+            res.status(500).send("Error fetching exam: " + error.message);
+        }
     }
+
 });
 
 // ✅ POST: Add an Exam
