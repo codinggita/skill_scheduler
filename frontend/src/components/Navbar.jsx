@@ -1,4 +1,4 @@
-import '../styling/navbar.css'
+import '../styling/Navbar.css'
 import React from 'react'
 
 const Navbar = () => {

@@ -62,6 +62,10 @@ const Yesterday = () => {
   const toggleNote = (id) => {
     setExpandedNoteId(expandedNoteId === id ? null : id);
   };
+
+  const toggleNote = (id) => {
+    setExpandedNoteId(expandedNoteId === id ? null : id);
+  };
   return (
     <div className="yesterday-container">
       <h2>Yesterday's Notes</h2>

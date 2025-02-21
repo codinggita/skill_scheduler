@@ -39,8 +39,8 @@ const StudyPlanner = () => {
         <div className="study-planner-container">
             <h2>Study Planner</h2>
             <div className="study-plan-form">
-                <input type="date" name="startDate" placeholder="Start Date" onChange={handleChange} />
-                <input type="date" name="endDate" placeholder="End Date" onChange={handleChange} />
+                <input type="text" name="startDate" placeholder="Start Date" onChange={handleChange} />
+                <input type="text" name="endDate" placeholder="End Date" onChange={handleChange} />
                 <input type="text" name="subject" placeholder="Subject" onChange={handleChange} />
                 <input type="text" name="important" placeholder="Important" onChange={handleChange} />
                 <input type="text" name="tasks" placeholder="Task List" onChange={handleChange} />

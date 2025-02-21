@@ -1,11 +1,13 @@
 /* Study Planner Main Container */
 .study-planner-container {
     width: 80%;
-    margin: 20px auto;
+    margin: 70px auto ;
     background: white;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    
+
   }
   
   /* Title */
@@ -35,7 +37,7 @@
   .add-exam-btn {
     padding: 10px;
     border: none;
-    background-color: #6c757d;
+    background-color: #130a47;
     color: white;
     border-radius: 5px;
     cursor: pointer;
@@ -60,7 +62,7 @@
   }
   
   .exam-table th {
-    background-color: #6c757d;
+    background-color: #130a47;
     color: white;
   }
   
