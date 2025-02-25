@@ -76,7 +76,7 @@ function Study() {
 
         {/* Add New Study Plan Form */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-          <h2 className="text-lg font-semibold mb-4">Add New Study Plan</h2>
+          <h2 className="text-lg font-semibold mb-4 text-black">Add New Study Plan</h2>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
@@ -86,7 +86,7 @@ function Study() {
                   name="startDate"
                   value={newPlan.startDate}
                   onChange={handleInputChange}
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-400"
                   required
                 />
               </div>
@@ -97,7 +97,7 @@ function Study() {
                   name="endDate"
                   value={newPlan.endDate}
                   onChange={handleInputChange}
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-400 "
                   required
                 />
               </div>
@@ -109,7 +109,7 @@ function Study() {
                   value={newPlan.subject}
                   onChange={handleInputChange}
                   placeholder="Enter subject"
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-400"
                   required
                 />
               </div>
@@ -122,7 +122,7 @@ function Study() {
                   name="priority"
                   value={newPlan.priority}
                   onChange={handleInputChange}
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-black"
                 >
                   <option value="High">High</option>
                   <option value="Medium">Medium</option>
@@ -137,7 +137,7 @@ function Study() {
                   value={newPlan.tasks}
                   onChange={handleInputChange}
                   placeholder="Enter tasks (separate by comma)"
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-black"
                   required
                 />
               </div>

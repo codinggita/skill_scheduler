@@ -1,68 +1,49 @@
 import React, { useState } from "react";
-import { RiCalendarLine, RiDashboardLine, RiFileTextLine, RiMenuLine, RiMoonLine, RiSettings4Line, RiTodoLine } from "react-icons/ri";
-import ToDo from "../pages/To-do";
-import Study from "./Study.jsx";
+import ToDo from "../pages/To-do.jsx";
+import Exam from "../components/Exam.jsx";
+import Study from "../components/Study.jsx";
 
 const Planner = () => {
-    const [activeTab, setActiveTab] = useState("To-Do List");
-    const [menuItems, setMenuItems] = useState([
-        { icon: RiTodoLine, text: 'To-Do List', active: true },
-        { icon: RiCalendarLine, text: 'Planner', active: false },
-        { icon: RiDashboardLine, text: 'Dashboard', active: false },
-        { icon: RiFileTextLine, text: 'Notes', active: false },
-    ]);
+  const [tabState, setTabState] = useState("todo");
 
-    const handleTabClick = (e) => {
-        setActiveTab(e.target.textContent);
-        setMenuItems(
-            menuItems.map((item) =>
-                item.text === e.target.textContent ? { ...item, active: true } : { ...item, active: false }
-            )
-        );
-    }
-    return (
-        <div className="flex h-screen bg-white text-white">
-            <div className="flex h-screen bg-blue-500 w-screen">
-                {/* Sidebar */}
-                <div className="w-64 bg-white flex flex-col border-r-2 border-gray-800 sticky top-0">
-                    {/* Logo */}
-                    <div className="p-6 border-gray-200">
-                        <div className="flex items-center gap-2">
-                            <div className="text-indigo-600 text-2xl font-bold">TaskOS</div>
-                        </div>
-                    </div>
-
-                    {/* Menu Items */}
-                    <nav className="flex-1 p-4">
-                        {menuItems.map((item, index) => (
-                            <div
-                                key={index}
-                                onClick={handleTabClick}
-                                className={`flex hover:shadow-lg hover:border hover:border-gray-300 hover:inset-shadow hover:inset-shadow-black items-center gap-3 px-4 py-3 rounded-lg cursor-pointer mb-1
-                ${item.active
-                                        ? 'bg-black text-white shadow-lg shadow-black/20'
-                                        : 'text-gray-600 hover:bg-gray-50'}`}
-                            >
-                                <item.icon className="text-xl" />
-                                <span>{item.text}</span>
-                            </div>
-                        ))}
-                    </nav>
-                </div>
-                <div className="bg-yellow-500 h-full pt-[64px] w-full">
-                    
-                    {
-                        (activeTab === "To-Do List") ? <ToDo /> : ""
-                    }
-                    {
-                        (activeTab === "Planner") ? <Study /> : ""
-                    }
-                </div>
-
-            </div>
-                      
+  return (
+    <div className="flex  text-white w-screen h-[calc(100vh-64px)] mt-[64px] overflow-y-auto">
+      {/* Sidebar */}
+      <div className="w-[224px] bg-white text-black  p-[16px] flex flex-col space-y-4 sticky top-0">
+        <h2 className="text-2xl font-bold mb-6">Skill Scheduler</h2>
+        <div className="space-y-3">
+          <button 
+            className={`w-full p-3 rounded-lg text-left transition duration-300 
+              ${tabState === "todo" ? "bg-gray-200" : "hover:bg-gray-200"}`} 
+            onClick={() => setTabState("todo")}
+          >
+            ✅ To-Do List
+          </button>
+          <button 
+            className={`w-full p-3 rounded-lg text-left transition duration-300 
+              ${tabState === "exam" ? "bg-gray-200" : "hover:bg-gray-200"}`} 
+            onClick={() => setTabState("exam")}
+          >
+            📅 Exam Dates
+          </button>
+          <button 
+            className={`w-full p-3 rounded-lg text-left transition duration-300 
+              ${tabState === "plan" ? "bg-gray-200" : "hover:bg-gray-200"}`} 
+            onClick={() => setTabState("plan")}
+          >
+            📖 Study Plan
+          </button>
         </div>
-    );
+      </div>
+
+      {/* Main Content Area */}
+      <div className="w-full p-6  rounded-lg shadow-lg flex justify-center">
+        {tabState === "todo" && <ToDo />}
+        {tabState === "exam" && <Exam />}
+        {tabState === "plan" && <Study />}
+      </div>
+    </div>
+  );
 };
 
 export default Planner;

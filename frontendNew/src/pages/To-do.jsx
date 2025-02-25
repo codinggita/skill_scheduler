@@ -1,84 +1,95 @@
-import { useState } from 'react'
+import React, { useEffect, useState } from "react";
 
-function ToDo() {
-  const [tasks, setTasks] = useState([
-    { id: 1, text: 'Complete project documentation', completed: false },
-    { id: 2, text: 'Review pull requests', completed: false },
-    { id: 3, text: 'Schedule team meeting', completed: false },
-    { id: 4, text: 'Update dependencies', completed: false }
-  ])
-  const [newTask, setNewTask] = useState('')
+const TodoComponents = () => {
+  const [tasks, setTasks] = useState([]);
+  const [newTask, setNewTask] = useState("");
 
-  const addTask = (e) => {
-    e.preventDefault()
-    if (!newTask.trim()) return
-    
-    setTasks([
-      ...tasks,
-      {
-        id: Date.now(),
-        text: newTask,
-        completed: false
-      }
-    ])
-    setNewTask('')
-  }
+  // Fetch all to-do items
+  useEffect(() => {
+    fetch("https://skill-scheduler.onrender.com/api/planner/pending-work")
+      .then((res) => res.json())
+      .then((data) => setTasks(data))
+      .catch((err) => console.error("Error fetching tasks:", err));
+  }, []);
 
-  const toggleTask = (taskId) => {
-    setTasks(tasks.map(task => 
-      task.id === taskId ? { ...task, completed: !task.completed } : task
-    ))
-  }
+  // Add a task
+  const addTask = () => {
+    if (!newTask.trim()) return;
+
+    fetch("https://skill-scheduler.onrender.com/api/planner/to-do", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ task: newTask }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setTasks([...tasks, data]); // Update UI
+        setNewTask("");
+      })
+      .catch((err) => console.error("Error adding task:", err));
+  };
+
+  // Delete a task
+  const deleteTask = (id) => {
+    fetch(`https://skill-scheduler.onrender.com/api/planner/to-do/${id}`, {
+      method: "DELETE",
+    })
+      .then((res) => {
+        if (res.ok) {
+          setTasks(tasks.filter((task) => task._id !== id)); // Remove task from UI
+        } else {
+          console.error("Error deleting task");
+        }
+      })
+      .catch((err) => console.error("Error deleting task:", err));
+  };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-8">
-      <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-8">
-        <h1 className="text-3xl font-bold mb-8">Task Manager</h1>
-        
-        <form onSubmit={addTask} className="mb-6 flex gap-2">
-  <input
-    type="text"
-    value={newTask}
-    onChange={(e) => setNewTask(e.target.value)}
-    placeholder="Add a new task..."
-    className={`flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-      newTask ? "text-black" : "text-gray-500"
-    }`}
-  />
-  <button
-    type="submit"
-    className="px-6 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
-  >
-    Add Task
-  </button>
-</form>
+    <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-lg">
+      {/* Header */}
+      <h2 className="text-2xl font-semibold text-gray-800 mb-4">To-do List</h2>
 
-
-        <div className="space-y-3">
-          {tasks.map(task => (
-            <div
-              key={task.id}
-              className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg"
-            >
-              <input
-                type="checkbox"
-                checked={task.completed}
-                onChange={() => toggleTask(task.id)}
-                className="w-5 h-5 border-2 rounded-md checked:bg-blue-500 cursor-pointer"
-              />
-              <span className={`flex-1 ${task.completed ? 'line-through text-gray-500 ' : ''}`}>
-                {task.text}
-              </span>
-            </div>
-          ))}
-        </div>
-
-        <footer className="mt-8 text-center text-gray-500 text-sm">
-          © 2024 Task Manager. All rights reserved.
-        </footer>
+      {/* Input Field */}
+      <div className="flex items-center space-x-3 mb-5">
+        <input
+          type="text"
+          value={newTask}
+          onChange={(e) => setNewTask(e.target.value)}
+          placeholder="Add a new task..."
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <button
+          onClick={addTask}
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+        >
+          +
+        </button>
       </div>
-    </div>
-  )
-}
 
-export default ToDo
+      {/* Task List */}
+      <ul className="space-y-3">
+        {tasks.map((task) => (
+          <li
+            key={task._id}
+            className="flex items-center justify-between bg-gray-100 p-3 rounded-lg shadow-sm"
+          >
+            <div className="flex items-center space-x-2">
+              <input type="checkbox" className="w-5 h-5 text-blue-600" />
+              <span className="text-gray-700">{task.task}</span>
+            </div>
+            <button
+              onClick={() => deleteTask(task._id)}
+              className="text-red-500 hover:text-red-700 transition"
+            >
+              ✖
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default TodoComponents;
