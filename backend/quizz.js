@@ -77,5 +77,16 @@ router.post("/generate-quiz", async (req, res) => {
     }
 });
 
+// ✅ POST: Add a New Quiz
+router.post("/quizzes", async (req, res) => {
+    try {
+        const quiz = { ...req.body, createdAt: new Date() };
+        const result = await quizzesCollection.insertOne(quiz);
+        res.status(201).json({ _id: result.insertedId, ...quiz });
+    } catch (err) {
+        res.status(500).json({ error: "Error adding quiz", message: err.message });
+    }
+});
+
 // Export the router and initialize function
 module.exports = { router, initializeCollections };
