@@ -5,7 +5,6 @@
     background: #ffffff;
     border-radius: 8px;
     box-shadow: 0px 4px 8px rgba(1, 0, 0, 0.1);
-    font-family: Arial, sans-serif;
   }
   
   /* Heading */
@@ -48,8 +47,9 @@
   /* Notes List */
   .notes-list {
     list-style: none;
-    padding: 0;
+    padding: 1px;
     margin-top: 20px;
+    margin-right: 8px;
   }
   
   .notes-list li {

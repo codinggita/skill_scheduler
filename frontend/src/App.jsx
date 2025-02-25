@@ -18,7 +18,7 @@ const App = () => {
         <Route path="/notes" element={<Notes />} />   
         <Route path="/quizz" element={<QuizSection />} />     
       </Routes>
-        <Footer/>
+      <Footer/>
     </Router>
   );
 };

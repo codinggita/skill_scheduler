@@ -4,7 +4,8 @@ import '../styling/createnotes.css';
 const CreateNotes = () => {
   const [notes, setNotes] = useState([]);
   const [noteText, setNoteText] = useState('');
-  const [expandedNoteId, setExpandedNoteId] = useState(null); // Track expanded note
+  const [expandedNoteId, setExpandedNoteId] = useState(null);
+
   // Fetch existing notes from API
   useEffect(() => {
     fetch('https://skill-scheduler.onrender.com/api/notes/yesterday')
@@ -67,7 +68,7 @@ const CreateNotes = () => {
             <pre className="note-content" onClick={() => toggleNote(note._id)}>
               {expandedNoteId === note._id
                 ? note.content // Show full content if expanded
-                : `${note.content.split('\n')[0].slice(0, 50)}...`} {/* Show preview */}
+                : `${note.content.split('\n')[0].slice(0, 50)}...`} 
             </pre>
             <button onClick={() => deleteNote(note._id)}>🗑️</button>
           </li>

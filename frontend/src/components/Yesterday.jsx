@@ -5,7 +5,7 @@ const Yesterday = () => {
   const [newNote, setNewNote] = useState('');
   const [editingNote, setEditingNote] = useState(null);
   const [editedContent, setEditedContent] = useState('');
-  const [expandedNoteId, setExpandedNoteId] = useState(null); // Track expanded note
+  const [expandedNoteId, setExpandedNoteId] = useState(null); 
 
   // Fetch all Yesterday notes
   useEffect(() => {
@@ -62,6 +62,7 @@ const Yesterday = () => {
   const toggleNote = (id) => {
     setExpandedNoteId(expandedNoteId === id ? null : id);
   };
+
   return (
     <div className="yesterday-container">
       <h2>Yesterday's Notes</h2>

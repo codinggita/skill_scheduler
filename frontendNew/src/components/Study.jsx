@@ -1,0 +1,208 @@
+import { useState } from 'react';
+import { format } from 'date-fns';
+
+function Study() {
+  const [studyPlans, setStudyPlans] = useState([
+    {
+      id: 1,
+      subject: 'Mathematics',
+      subTitle: 'Advanced Calculus',
+      priority: 'High',
+      startDate: '2024-01-15',
+      endDate: '2024-02-15',
+      tasks: [
+        'Differential equations',
+        'Integration techniques',
+        'Vector calculus'
+      ]
+    },
+    {
+      id: 2,
+      subject: 'Physics',
+      subTitle: 'Quantum Mechanics',
+      priority: 'Medium',
+      startDate: '2024-02-01',
+      endDate: '2024-03-01',
+      tasks: [
+        'Wave functions',
+        'Schrödinger equation',
+        'Particle physics'
+      ]
+    }
+  ]);
+
+  const [newPlan, setNewPlan] = useState({
+    subject: '',
+    startDate: '',
+    endDate: '',
+    priority: 'High',
+    tasks: ''
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewPlan(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const newStudyPlan = {
+      id: Date.now(),
+      ...newPlan,
+      tasks: newPlan.tasks.split(',').map(task => task.trim())
+    };
+    setStudyPlans(prev => [...prev, newStudyPlan]);
+    setNewPlan({
+      subject: '',
+      startDate: '',
+      endDate: '',
+      priority: 'High',
+      tasks: ''
+    });
+  };
+
+  const handleDelete = (id) => {
+    setStudyPlans(prev => prev.filter(plan => plan.id !== id));
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 p-8">
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-2xl font-bold text-gray-900 mb-1">Study Planner</h1>
+        <p className="text-gray-600 mb-8">Organize your study schedule effectively</p>
+
+        {/* Add New Study Plan Form */}
+        <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
+          <h2 className="text-lg font-semibold mb-4 text-black">Add New Study Plan</h2>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                <input
+                  type="date"
+                  name="startDate"
+                  value={newPlan.startDate}
+                  onChange={handleInputChange}
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-400"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                <input
+                  type="date"
+                  name="endDate"
+                  value={newPlan.endDate}
+                  onChange={handleInputChange}
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-400 "
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Subject</label>
+                <input
+                  type="text"
+                  name="subject"
+                  value={newPlan.subject}
+                  onChange={handleInputChange}
+                  placeholder="Enter subject"
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-400"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+                <select
+                  name="priority"
+                  value={newPlan.priority}
+                  onChange={handleInputChange}
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-black"
+                >
+                  <option value="High">High</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Low">Low</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Tasks</label>
+                <input
+                  type="text"
+                  name="tasks"
+                  value={newPlan.tasks}
+                  onChange={handleInputChange}
+                  placeholder="Enter tasks (separate by comma)"
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-black"
+                  required
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              + Add Plan
+            </button>
+          </form>
+        </div>
+
+        {/* Study Plans List */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {studyPlans.map(plan => (
+            <div key={plan.id} className="bg-white rounded-lg shadow-sm p-6">
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">{plan.subject}</h3>
+                  <p className="text-sm text-gray-500">{plan.subTitle}</p>
+                </div>
+                <span className={`
+                  px-2 py-1 text-xs font-medium rounded-full
+                  ${plan.priority === 'High' ? 'bg-red-100 text-red-800' : 
+                    plan.priority === 'Medium' ? 'bg-yellow-100 text-yellow-800' : 
+                    'bg-green-100 text-green-800'}
+                `}>
+                  {plan.priority}
+                </span>
+              </div>
+
+              <div className="space-y-2 mb-4">
+                <div className="flex items-center text-sm text-gray-500">
+                  <span className="font-medium">Start:</span>
+                  <span className="ml-2">{format(new Date(plan.startDate), 'MMM d, yyyy')}</span>
+                </div>
+                <div className="flex items-center text-sm text-gray-500">
+                  <span className="font-medium">End:</span>
+                  <span className="ml-2">{format(new Date(plan.endDate), 'MMM d, yyyy')}</span>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <h4 className="text-sm font-medium text-gray-700">Tasks:</h4>
+                <ul className="list-disc list-inside space-y-1">
+                  {plan.tasks.map((task, index) => (
+                    <li key={index} className="text-sm text-gray-600">{task}</li>
+                  ))}
+                </ul>
+              </div>
+
+              <button
+                onClick={() => handleDelete(plan.id)}
+                className="mt-4 inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+              >
+                Delete
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default Study;

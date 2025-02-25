@@ -2,16 +2,17 @@
 .notes-container {
   display: flex;
   height: 100vh;
-  background-color: hsl(0, 0%, 88%);
   gap: 2em;
-  font-family: Arial, sans-serif;
+  font-family:sans-serif ;
 }
 
 /* Sidebar */
 .notes-sidebar {
+  width: 250px;
   min-width: 250px;
-  margin-top: 1em;
+  margin-top: 3.9em;
   margin-left: 0.5em;
+  margin-left: 2em;
   background-color: #4a627b;
   padding: 20px;
   display: flex;
@@ -19,7 +20,6 @@
   align-items: center;
   border-radius: 0.5em;
 }
-
 /* Tab Container */
 .notes-tab-container {
   width: 100%;
@@ -57,7 +57,5 @@
 .outer-yesterday-container {
   flex-grow: 1;
   padding: 20px;
-  background: white;
-  border-left: 2px solid #ccc;
-  overflow-y: auto;
+  width: 80%;
 }
