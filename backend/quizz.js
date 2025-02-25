@@ -38,20 +38,6 @@ router.get("/quizzes/subject/:subject", async (req, res) => {
     }
 });
 
-// ✅ GET: Fetch Quiz by Title
-router.get("/quizzes/title/:title", async (req, res) => {
-    try {
-        const title = req.params.title;
-        const quiz = await quizzesCollection.findOne({ title });
-        if (!quiz) {
-            return res.status(404).json({ message: "No quiz found with this title" });
-        }
-        res.status(200).json(quiz);
-    } catch (err) {
-        res.status(500).json({ error: "Error fetching quiz", message: err.message });
-    }
-});
-
 // ✅ POST: Generate a Quiz (Randomly select questions from existing quizzes)
 router.post("/generate-quiz", async (req, res) => {
     try {
