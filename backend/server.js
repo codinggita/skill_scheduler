@@ -11,12 +11,11 @@ const dbName = "skill_scheduler";
 
 // Middleware
 app.use(express.json());
-const corsOptions = {
-    origin: 'http://localhost:5173', // Replace with your frontend's URL
-    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-  }
-  
-  app.use(cors(corsOptions));
+app.use(cors({
+    origin: "*", // Allows all origins (for testing only)
+    methods: "GET,POST,PUT,DELETE",
+    allowedHeaders: "Content-Type,Authorization"
+}));
 
 let db;
 

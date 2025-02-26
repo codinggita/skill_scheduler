@@ -67,7 +67,9 @@ router.post("/generate-quiz", async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: "Error generating quiz", message: err.message });
     }
+    res.status(201).json({ /* quiz data */ });
 });
+
 
 
 
