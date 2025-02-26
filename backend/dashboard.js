@@ -17,7 +17,7 @@ const initializeCollections = (database) => {
     console.log("✅ Dashboard collections initialized.");
 };
 
-// ✅ GET: Dashboard data
+// ✅ GET: Dashboard data 
 router.get('/dashboard', async (req, res) => {
     try {
         if (!plannerCollection || !notesCollection) {

@@ -24,6 +24,15 @@ router.get("/", async (req, res) => {
         res.status(500).send("Error fetching notes: " + err.message);
     }
 });
+router.delete("/api/notes/:id", async (req, res) => {
+    try {
+      const note = await Note.findByIdAndDelete(req.params.id);
+      if (!note) return res.status(404).json({ message: "Note not found" });
+      res.json({ message: "Note deleted successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Error deleting note" });
+    }
+  });
 
 // ✅ GET: Fetch All Yesterday's Notes
 router.get("/yesterday", async (req, res) => {
