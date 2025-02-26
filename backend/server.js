@@ -11,7 +11,12 @@ const dbName = "skill_scheduler";
 
 // Middleware
 app.use(express.json());
-app.use(cors());
+const corsOptions = {
+    origin: 'http://localhost:5173', // Replace with your frontend's URL
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+  }
+  
+  app.use(cors(corsOptions));
 
 let db;
 
@@ -19,7 +24,7 @@ let db;
 const { router: dashboardRouter, initializeCollections: initializeDashboard } = require('./dashboard');
 const { router: notesRouter, initializeCollections: initializeNotes } = require('./notes');
 const { router: plannerRouter, initializeCollections: initializePlanner } = require('./planner');
-const { router: quizzesRouter, initializeCollections: initializeQuizzes } = require('./quizz');
+const { router: quizzeRouter, initializeCollections: initializeQuizzes } = require('./quizz');
 
 // Connect to MongoDB and initialize collections
 async function initializeDatabase() {
@@ -39,7 +44,7 @@ async function initializeDatabase() {
         app.use('/api/dashboard', dashboardRouter);
         app.use('/api/notes', notesRouter);
         app.use('/api/planner', plannerRouter);
-        app.use("/api/quizz", quizzesRouter);
+        app.use("/api/quizz", quizzeRouter);
 
         // ✅ Start the server
         app.listen(port, () => {

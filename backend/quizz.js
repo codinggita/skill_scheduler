@@ -39,36 +39,28 @@ router.get("/quizzes/subject/:subject", async (req, res) => {
 });
 
 // ✅ POST: Generate a Quiz (Randomly select questions from existing quizzes)
-// ✅ POST: Generate a Quiz (Randomly select questions from existing quizzes)
+
 router.post("/generate-quiz", async (req, res) => {
     try {
         const numQuestions = req.body.numQuestions || 5;
         const quizzes = await quizzesCollection.find().toArray();
 
-        // ✅ Ensure we only take quizzes that have a valid `questions` array
-        const allQuestions = quizzes
-            .filter(quiz => Array.isArray(quiz.questions) && quiz.questions.length > 0)
-            .reduce((acc, quiz) => acc.concat(quiz.questions), []);
+        // ✅ Extract all valid questions
+        const allQuestions = quizzes.flatMap(quiz => quiz.questions || []);
 
         if (allQuestions.length === 0) {
-            return res.status(404).json({ error: "No questions available to generate a quiz" });
+            return res.status(400).json({ error: "No questions available to generate quiz" });
         }
 
-        // ✅ Prevent selecting more questions than available
+        // ✅ Ensure we don't request more questions than available
         const numToSelect = Math.min(numQuestions, allQuestions.length);
-        const selectedQuestions = [];
 
-        while (selectedQuestions.length < numToSelect) {
-            const randomIndex = Math.floor(Math.random() * allQuestions.length);
-            const question = allQuestions.splice(randomIndex, 1)[0];
-            if (question) {
-                selectedQuestions.push(question);
-            }
-        }
+        // ✅ Shuffle questions and pick the first `numToSelect`
+        const shuffledQuestions = allQuestions.sort(() => Math.random() - 0.5).slice(0, numToSelect);
 
         const generatedQuiz = {
             title: "Generated Quiz",
-            questions: selectedQuestions
+            questions: shuffledQuestions
         };
 
         res.status(201).json(generatedQuiz);
@@ -76,6 +68,7 @@ router.post("/generate-quiz", async (req, res) => {
         res.status(500).json({ error: "Error generating quiz", message: err.message });
     }
 });
+
 
 
 // ✅ POST: Add a New Quiz
