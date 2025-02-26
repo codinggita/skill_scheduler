@@ -11,11 +11,7 @@ const dbName = "skill_scheduler";
 
 // Middleware
 app.use(express.json());
-app.use(cors({
-    origin: "*", // Allows all origins (for testing only)
-    methods: "GET,POST,PUT,DELETE",
-    allowedHeaders: "Content-Type,Authorization"
-}));
+app.use(cors());
 
 let db;
 
