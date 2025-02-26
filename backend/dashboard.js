@@ -2,27 +2,38 @@ const express = require('express');
 const router = express.Router();
 const { ObjectId } = require('mongodb');
 
-// MongoDB connection (this will be initialized in server.js)
 let db;
+let dashboardCollection;
 let plannerCollection;
 let notesCollection;
-let dashboardCollection;
 
-// Function to initialize collections
+// ✅ Function to initialize collections
 const initializeCollections = (database) => {
     db = database;
-    planndashboardCollection = db.collection('dashboard');erCollection = db.collection('planner');
+    dashboardCollection = db.collection('dashboard'); 
+    plannerCollection = db.collection('planner');
     notesCollection = db.collection('notes');
+
+    console.log("✅ Dashboard collections initialized.");
 };
 
-// GET: Dashboard data
+// ✅ GET: Dashboard data
 router.get('/dashboard', async (req, res) => {
     try {
+        if (!plannerCollection || !notesCollection) {
+            return res.status(500).json({ error: "Database collections not initialized" });
+        }
+
         const totalTasks = await plannerCollection.countDocuments();
         const completedTasks = await plannerCollection.countDocuments({ status: "Completed" });
 
-        const taskCompletionPercentage = ((completedTasks / totalTasks) * 100).toFixed(2);
-        const notesOverview = await notesCollection.find({}, { projection: { id: 1, title: 1, content: 1, createdAt: 1 } }).toArray();
+        const taskCompletionPercentage = totalTasks > 0 
+            ? ((completedTasks / totalTasks) * 100).toFixed(2) 
+            : 0;
+
+        const notesOverview = await notesCollection.find({}, { 
+            projection: { id: 1, title: 1, content: 1, createdAt: 1 } 
+        }).toArray();
 
         res.status(200).json({
             progressReport: {
@@ -33,80 +44,107 @@ router.get('/dashboard', async (req, res) => {
             notesOverview
         });
     } catch (err) {
-        res.status(500).send("Error fetching dashboard data: " + err.message);
+        res.status(500).json({ error: "Error fetching dashboard data", details: err.message });
     }
 });
 
+// ✅ GET: Progress Data
 router.get('/progress', async (req, res) => {
     try {
+        if (!dashboardCollection) {
+            return res.status(500).json({ error: "Dashboard collection not initialized" });
+        }
+
         const progressData = await dashboardCollection.findOne({ type: "progress" });
-        if (!progressData) return res.status(404).send("No progress data found");
+        if (!progressData) {
+            return res.status(404).json({ message: "No progress data found" });
+        }
 
         res.status(200).json(progressData);
     } catch (err) {
-        res.status(500).send("Error fetching progress data: " + err.message);
+        res.status(500).json({ error: "Error fetching progress data", details: err.message });
     }
 });
 
-router.post("/api/progress", async (req, res) => {
+// ✅ POST: Add Progress Data
+router.post("/progress", async (req, res) => {
     try {
-        const progressArray1 = req.body; // Should be an array of objects
-        if (!Array.isArray(progressArray1)) {
-            return res.status(400).json({ message: "Expected an array of progress records" });
+        if (!dashboardCollection) {
+            return res.status(500).json({ error: "Dashboard collection not initialized" });
         }
 
-        const result = await db.collection("progress").insertMany(progressArray1);
-        res.status(201).json({ message: "Progress records added successfully", insertedCount: result.insertedCount });
-    } catch (error) {
-        console.error("Error adding progress:", error);
-        res.status(500).json({ message: "Error adding progress" });
-    }
-});
-
-router.get('/notes-overview', async (req, res) => {
-    try {
-        const notesOverview = await dashboardCollection.findOne({ type: "notes-overview" });
-        if (!notesOverview) return res.status(404).send("No notes overview found");
-
-        res.status(200).json(notesOverview);
-    } catch (err) {
-        res.status(500).send("Error fetching notes overview: " + err.message);
-    }
-});
-
-// ✅ POST: Add Notes Overview
-
-  
-  router.post("/api/notes-overview", async (req, res) => {
-    try {
         const progressArray = req.body; // Should be an array of objects
         if (!Array.isArray(progressArray)) {
             return res.status(400).json({ message: "Expected an array of progress records" });
         }
 
-        const result = await db.collection("progress").insertMany(progressArray);
-        res.status(201).json({ message: "Progress records added successfully", insertedCount: result.insertedCount });
+        const result = await dashboardCollection.insertMany(progressArray);
+        res.status(201).json({ 
+            message: "Progress records added successfully", 
+            insertedCount: result.insertedCount 
+        });
     } catch (error) {
-        console.error("Error adding progress:", error);
-        res.status(500).json({ message: "Error adding progress" });
+        res.status(500).json({ error: "Error adding progress", details: error.message });
     }
 });
-  
+
+// ✅ GET: Notes Overview
+router.get('/notes-overview', async (req, res) => {
+    try {
+        if (!dashboardCollection) {
+            return res.status(500).json({ error: "Dashboard collection not initialized" });
+        }
+
+        const notesOverview = await dashboardCollection.findOne({ type: "notes-overview" });
+        if (!notesOverview) {
+            return res.status(404).json({ message: "No notes overview found" });
+        }
+
+        res.status(200).json(notesOverview);
+    } catch (err) {
+        res.status(500).json({ error: "Error fetching notes overview", details: err.message });
+    }
+});
+
+// ✅ POST: Add Notes Overview
+router.post("/notes-overview", async (req, res) => {
+    try {
+        if (!dashboardCollection) {
+            return res.status(500).json({ error: "Dashboard collection not initialized" });
+        }
+
+        const notesArray = req.body; // Should be an array of objects
+        if (!Array.isArray(notesArray)) {
+            return res.status(400).json({ message: "Expected an array of notes" });
+        }
+
+        const result = await dashboardCollection.insertMany(notesArray);
+        res.status(201).json({ 
+            message: "Notes added successfully", 
+            insertedCount: result.insertedCount 
+        });
+    } catch (error) {
+        res.status(500).json({ error: "Error adding notes", details: error.message });
+    }
+});
 
 // ✅ GET: Fetch Upcoming Exam Dates
 router.get('/upcoming-exams', async (req, res) => {
     try {
+        if (!dashboardCollection) {
+            return res.status(500).json({ error: "Dashboard collection not initialized" });
+        }
+
         const exams = await dashboardCollection.find({ type: "exam-date" }).toArray();
-        if (!exams.length) return res.status(404).send("No upcoming exams found");
+        if (!exams.length) {
+            return res.status(404).json({ message: "No upcoming exams found" });
+        }
 
         res.status(200).json(exams);
     } catch (err) {
-        res.status(500).send("Error fetching exam dates: " + err.message);
+        res.status(500).json({ error: "Error fetching exam dates", details: err.message });
     }
 });
 
-// ✅ POST: Add Progress Data (For Testing)
-
-// Export the router and the initializeCollections function
+// ✅ Export the router and initializeCollections function
 module.exports = { router, initializeCollections };
-
