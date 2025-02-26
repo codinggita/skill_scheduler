@@ -39,17 +39,31 @@ router.get("/quizzes/subject/:subject", async (req, res) => {
 });
 
 // ✅ POST: Generate a Quiz (Randomly select questions from existing quizzes)
+// ✅ POST: Generate a Quiz (Randomly select questions from existing quizzes)
 router.post("/generate-quiz", async (req, res) => {
     try {
-        const numQuestions = req.body.numQuestions || 5; // Default to 5 questions if not specified
+        const numQuestions = req.body.numQuestions || 5;
         const quizzes = await quizzesCollection.find().toArray();
-        const allQuestions = quizzes.reduce((acc, quiz) => acc.concat(quiz.questions), []);
 
-        // Randomly select questions
+        // ✅ Ensure we only take quizzes that have a valid `questions` array
+        const allQuestions = quizzes
+            .filter(quiz => Array.isArray(quiz.questions) && quiz.questions.length > 0)
+            .reduce((acc, quiz) => acc.concat(quiz.questions), []);
+
+        if (allQuestions.length === 0) {
+            return res.status(404).json({ error: "No questions available to generate a quiz" });
+        }
+
+        // ✅ Prevent selecting more questions than available
+        const numToSelect = Math.min(numQuestions, allQuestions.length);
         const selectedQuestions = [];
-        for (let i = 0; i < numQuestions; i++) {
+
+        while (selectedQuestions.length < numToSelect) {
             const randomIndex = Math.floor(Math.random() * allQuestions.length);
-            selectedQuestions.push(allQuestions.splice(randomIndex, 1)[0]);
+            const question = allQuestions.splice(randomIndex, 1)[0];
+            if (question) {
+                selectedQuestions.push(question);
+            }
         }
 
         const generatedQuiz = {
@@ -62,6 +76,7 @@ router.post("/generate-quiz", async (req, res) => {
         res.status(500).json({ error: "Error generating quiz", message: err.message });
     }
 });
+
 
 // ✅ POST: Add a New Quiz
 router.post("/quizzes", async (req, res) => {
