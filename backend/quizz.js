@@ -38,42 +38,49 @@ router.get("/quizzes/subject/:subject", async (req, res) => {
     }
 });
 
-// ✅ GET: Fetch Quiz by Title
-router.get("/quizzes/title/:title", async (req, res) => {
-    try {
-        const title = req.params.title;
-        const quiz = await quizzesCollection.findOne({ title });
-        if (!quiz) {
-            return res.status(404).json({ message: "No quiz found with this title" });
-        }
-        res.status(200).json(quiz);
-    } catch (err) {
-        res.status(500).json({ error: "Error fetching quiz", message: err.message });
-    }
-});
-
 // ✅ POST: Generate a Quiz (Randomly select questions from existing quizzes)
+
 router.post("/generate-quiz", async (req, res) => {
     try {
-        const numQuestions = req.body.numQuestions || 5; // Default to 5 questions if not specified
+        const numQuestions = req.body.numQuestions || 5;
         const quizzes = await quizzesCollection.find().toArray();
-        const allQuestions = quizzes.reduce((acc, quiz) => acc.concat(quiz.questions), []);
 
-        // Randomly select questions
-        const selectedQuestions = [];
-        for (let i = 0; i < numQuestions; i++) {
-            const randomIndex = Math.floor(Math.random() * allQuestions.length);
-            selectedQuestions.push(allQuestions.splice(randomIndex, 1)[0]);
+        // ✅ Extract all valid questions
+        const allQuestions = quizzes.flatMap(quiz => quiz.questions || []);
+
+        if (allQuestions.length === 0) {
+            return res.status(400).json({ error: "No questions available to generate quiz" });
         }
+
+        // ✅ Ensure we don't request more questions than available
+        const numToSelect = Math.min(numQuestions, allQuestions.length);
+
+        // ✅ Shuffle questions and pick the first `numToSelect`
+        const shuffledQuestions = allQuestions.sort(() => Math.random() - 0.5).slice(0, numToSelect);
 
         const generatedQuiz = {
             title: "Generated Quiz",
-            questions: selectedQuestions
+            questions: shuffledQuestions
         };
 
         res.status(201).json(generatedQuiz);
     } catch (err) {
         res.status(500).json({ error: "Error generating quiz", message: err.message });
+    }
+    res.status(201).json({ /* quiz data */ });
+});
+
+
+
+
+// ✅ POST: Add a New Quiz
+router.post("/quizzes", async (req, res) => {
+    try {
+        const quiz = { ...req.body, createdAt: new Date() };
+        const result = await quizzesCollection.insertOne(quiz);
+        res.status(201).json({ _id: result.insertedId, ...quiz });
+    } catch (err) {
+        res.status(500).json({ error: "Error adding quiz", message: err.message });
     }
 });
 
