@@ -29,7 +29,7 @@ const recommendations = [
 
 function Imp() {
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="flex bg-gray-100 w-screen h-[calc(100vh-64px)] mt-[64px]">
       <div className="max-w-4xl mx-auto space-y-8">
         <div className="flex items-center gap-2 mb-6">
           <BsGraphUp className="text-2xl text-blue-600" />

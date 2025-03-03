@@ -4,7 +4,7 @@ import Navbar from "./components/Navbar.jsx";
 import Dashboard from "./components/Dashboard.jsx"
 import Notes from "./components/Notes.jsx";
 import Planner from "./components/Planner.jsx";
-
+import Quizz from "./components/Quizz.jsx";
 
 const App = () => {
   return (
@@ -12,9 +12,11 @@ const App = () => {
       <Navbar/>
       
       <Routes>
+        <Route path="/" element={<Navigate to="/dashboard" />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/notes" element={<Notes />} />
         <Route path="/planner" element={<Planner />} />
+        <Route path="/quiz" element={<Quizz/>} />
       </Routes>
     </Router>
   );

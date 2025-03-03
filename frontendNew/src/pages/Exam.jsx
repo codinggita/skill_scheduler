@@ -29,12 +29,12 @@ function Exam() {
   return (
     <div className="min-h-screen  text-white py-8 px-4 sm:px-6 lg:px-8 font-mono">
       <div className="max-w-4xl mx-auto">
-        <div className="bg-gray-100 rounded-lg text-black shadow-2xl shadow-black/20 p-6 border border-gray-700">
+        <div className="bg-gray-100 rounded-lg text-black shadow-2xl shadow-black/20 p-6 border border-gray-700 font-sans">
           <h1 className="text-3xl font-bold  mb-2">Exam Schedule</h1>
           <p className="text-black mb-6">Manage your upcoming exams and track your study progress</p>
 
-          <div className="mb-8">
-            <form onSubmit={handleAddExam} className="flex flex-wrap gap-4">
+          <div className="mb-8 font-sans">
+            <form onSubmit={handleAddExam} className="flex flex-wrap gap-4 font-sans">
               <input
                 type="text"
                 placeholder="Enter subject name "
@@ -51,7 +51,7 @@ function Exam() {
               <input
                 type="text"
                 placeholder="Enter pending tasks"
-                className="flex-1 min-w-[200px] px-4 py-2 bg-gray-800 border border-gray-700 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                className="flex-1 min-w-[200px] px-4 py-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 text-white"
                 value={newExam.pending}
                 onChange={(e) => setNewExam({ ...newExam, pending: e.target.value })}
               />
@@ -63,11 +63,11 @@ function Exam() {
               </button>
             </form>
           </div>
-
+          
           <div className="overflow-x-auto">
             <table className="min-w-full border border-gray-700">
               <thead>
-                <tr className="border-b border-gray-600">
+                <tr className="border-b border-gray-600 font-sans">
                   <th className="py-3 text-left text-black font-medium">DATE</th>
                   <th className="py-3 text-left text-black font-medium">SUBJECT</th>
                   <th className="py-3 text-left text-black font-medium">PENDING WORK</th>
@@ -76,7 +76,7 @@ function Exam() {
               </thead>
               <tbody>
                 {exams.map((exam, index) => (
-                  <tr key={index} className="border-b border-gray-700">
+                  <tr key={index} className="border-b border-gray-700 font-sans">
                     <td className="py-4 text-gray-900">{exam.date}</td>
                     <td className="py-4 text-gray-900">{exam.subject}</td>
                     <td className="py-4 text-gray-900">{exam.pending}</td>
@@ -95,7 +95,7 @@ function Exam() {
           </div>
         </div>
 
-        <footer className="mt-8 text-center text-black text-sm">
+        <footer className="mt-8 text-center text-black text-sm font-sans">
           © 2024 Study Planner. All rights reserved.
         </footer>
       </div>

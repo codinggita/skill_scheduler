@@ -32,33 +32,33 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div className="bg-gray-600 text-white p-6 flex flex-col items-center w-screen h-[calc(100vh-64px)] mt-[64px] overflow-y-auto">
+    <div className="bg-white-600 text-black p-6 flex flex-col items-center w-screen h-[calc(100vh-64px)] mt-[64px] overflow-y-auto">
       <h1 className="text-3xl font-bold">Welcome to Skill Scheduler</h1>
       <p className="text-lg text-gray-400 mt-2">Focus Forward</p>
 
       {/* Show Loader while loading */}
       {loading ? (
         <div className="flex justify-center items-center h-64">
-          <ClipLoader color="#ffffff" size={50} />
+          <ClipLoader color="black" size={50} />
         </div>
       ) : (
         <div className="grid md:grid-cols-3 gap-6 w-full max-w-5xl mt-6">
-          <div className="bg-gray-900 p-6 rounded-lg shadow-md text-center">
-            <h3 className="text-xl font-semibold mb-2">Progress Overview</h3>
-            <div className="relative w-24 h-24 mx-auto rounded-full border-4 border-white flex items-center justify-center">
-              <span className="text-2xl">{studyHours}Hr</span>
+          <div className="bg-black p-6 rounded-lg shadow-md text-center">
+            <h3 className="text-xl font-semibold mb-2 text-white">Progress Overview</h3>
+            <div className="relative w-24 h-24 mx-auto rounded-full border-4 border-white flex items-center justify-center ">
+              <span className="text-2xl text-white ">{studyHours}Hr</span>
             </div>
-            <p className="mt-2">Your Progress</p>
+            <p className="mt-2 text-white">Your Progress</p>
             <div className="mt-4">
-              <p className="text-sm">Quiz Progress</p>
-              <div className="w-full bg-gray-700 h-2 rounded-full mt-1">
+              <p className="text-sm text-white">Quiz Progress</p>
+              <div className="w-full bg-white h-3 rounded-full mt-2"> 
                 <div className="bg-white h-2 rounded-full" style={{ width: `${quizProgress}%` }}></div>
               </div>
             </div>
           </div>
 
-          <div className="bg-gray-900 p-6 rounded-lg shadow-md">
-            <h3 className="text-xl font-semibold mb-2">Points from Notes</h3>
+          <div className="bg-black p-6 rounded-lg shadow-md">
+            <h3 className="text-xl font-semibold mb-2 text-white">Points from Notes</h3>
             {notes.length > 0 ? (
               notes.map((note, index) => (
                 <p key={index} className="text-gray-300 text-sm border-b border-gray-700 py-2">{note.content}</p>
@@ -68,8 +68,8 @@ const Dashboard = () => {
             )}
           </div>
 
-          <div className="bg-gray-900 p-6 rounded-lg shadow-md">
-            <h3 className="text-xl font-semibold mb-2">Exam Priority</h3>
+          <div className="bg-black p-6 rounded-lg shadow-md">
+            <h3 className="text-xl font-semibold mb-2 text-white ">Exam Priority</h3>
             <ul>
               {upcomingExams.length > 0 ? (
                 upcomingExams.map((exam, index) => (
