@@ -57,15 +57,16 @@ const NoteList = () => {
 
   const deleteNote = async (id) => {
     try {
-      await axios.delete(`${API_URL}/${id}`);
-      setNotes(notes.filter((note) => note._id !== id));
+      console.log("Deleting note with ID:", id);
+        await axios.delete(`https://skill-scheduler.onrender.com/api/notes/${id}`);
+        console.log("Note deleted successfully");
     } catch (error) {
-      console.error("Error deleting note:", error);
+        console.error("Error deleting note:", error);
     }
-  };
+};
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+  <div className="flex bg-gray-100 w-screen h-[calc(100vh-64px)] mt-[64px]">
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-6 px-4">
           <h1 className="text-2xl font-bold text-gray-900">My Notes</h1>

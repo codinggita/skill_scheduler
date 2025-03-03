@@ -12,7 +12,6 @@ const initializeCollections = (database) => {
     notesCollection = db.collection("notes");
 };
 
-
 //  GET: Fetch All Notes
 //  Endpoint: GET /api/notes
 //  Description: Fetch all notes from the database
@@ -22,6 +21,18 @@ router.get("/", async (req, res) => {
         res.status(200).json(notes);
     } catch (err) {
         res.status(500).send("Error fetching notes: " + err.message);
+ }
+});
+router.delete('/api/notes/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const result = await db.collection('notes').deleteOne({ _id: new ObjectId(id) });
+        if (result.deletedCount === 0) {
+            return res.status(404).json({ message: "Note not found" });
+        }
+        res.json({ message: "Note deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
