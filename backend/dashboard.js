@@ -35,12 +35,16 @@ router.get('/dashboard', async (req, res) => {
             projection: { id: 1, title: 1, content: 1, createdAt: 1 } 
         }).toArray();
 
+        const progressData = await dashboardCollection.findOne({ type: "progress" }) || {};
+
         res.status(200).json({
             progressReport: {
                 totalTasks,
                 completedTasks,
                 taskCompletionPercentage
             },
+            studiedHours: progressData.studiedHours || 0,
+            quizProgress: progressData.quizProgress || 0,
             notesOverview
         });
     } catch (err) {
@@ -55,11 +59,7 @@ router.get('/progress', async (req, res) => {
             return res.status(500).json({ error: "Dashboard collection not initialized" });
         }
 
-        const progressData = await dashboardCollection.findOne({ type: "progress" });
-        if (!progressData) {
-            return res.status(404).json({ message: "No progress data found" });
-        }
-
+        const progressData = await dashboardCollection.findOne({ type: "progress" }) || {};
         res.status(200).json(progressData);
     } catch (err) {
         res.status(500).json({ error: "Error fetching progress data", details: err.message });
@@ -73,7 +73,7 @@ router.post("/progress", async (req, res) => {
             return res.status(500).json({ error: "Dashboard collection not initialized" });
         }
 
-        const progressArray = req.body; // Should be an array of objects
+        const progressArray = req.body;
         if (!Array.isArray(progressArray)) {
             return res.status(400).json({ message: "Expected an array of progress records" });
         }
@@ -91,15 +91,11 @@ router.post("/progress", async (req, res) => {
 // ✅ GET: Notes Overview
 router.get('/notes-overview', async (req, res) => {
     try {
-        if (!dashboardCollection) {
-            return res.status(500).json({ error: "Dashboard collection not initialized" });
+        if (!notesCollection) {
+            return res.status(500).json({ error: "Notes collection not initialized" });
         }
 
-        const notesOverview = await dashboardCollection.findOne({ type: "notes-overview" });
-        if (!notesOverview) {
-            return res.status(404).json({ message: "No notes overview found" });
-        }
-
+        const notesOverview = await notesCollection.find({}).toArray();
         res.status(200).json(notesOverview);
     } catch (err) {
         res.status(500).json({ error: "Error fetching notes overview", details: err.message });
@@ -109,16 +105,16 @@ router.get('/notes-overview', async (req, res) => {
 // ✅ POST: Add Notes Overview
 router.post("/notes-overview", async (req, res) => {
     try {
-        if (!dashboardCollection) {
-            return res.status(500).json({ error: "Dashboard collection not initialized" });
+        if (!notesCollection) {
+            return res.status(500).json({ error: "Notes collection not initialized" });
         }
 
-        const notesArray = req.body; // Should be an array of objects
+        const notesArray = req.body;
         if (!Array.isArray(notesArray)) {
             return res.status(400).json({ message: "Expected an array of notes" });
         }
 
-        const result = await dashboardCollection.insertMany(notesArray);
+        const result = await notesCollection.insertMany(notesArray);
         res.status(201).json({ 
             message: "Notes added successfully", 
             insertedCount: result.insertedCount 

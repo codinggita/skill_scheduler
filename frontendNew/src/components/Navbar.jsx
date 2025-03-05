@@ -28,6 +28,7 @@ const Navbar = () => {
             <Link to="/notes" className="hover:text-gray-500 transition-colors duration-200">Notes</Link>
             <Link to="/planner" className="hover:text-gray-500 transition-colors duration-200">Planner</Link>
             <Link to="/quiz" className="hover:text-gray-500 transition-colors duration-200">Quiz</Link>
+            <Link to="/submitquiz" className="hover:text-gray-500 transition-colors duration-200">Submit</Link>
             <button
               onClick={toggleTheme}
               className={`px-4 py-2 rounded-md ${
