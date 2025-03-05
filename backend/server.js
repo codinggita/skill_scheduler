@@ -1,53 +1,79 @@
-const express = require('express');
-const { MongoClient } = require('mongodb');
-const cors = require('cors');
+const express = require("express");
+const { MongoClient } = require("mongodb");
+const cors = require("cors");
+const session = require("express-session");
+const authRoutes = require("./auth"); // Import authentication routes
 
 const app = express();
 const port = 3000;
 
-// ✅ MongoDB connection details (Added DB name)
+// ✅ MongoDB connection URI
 const uri = "mongodb+srv://ishitatrivedi2401:ishitatrivedi061106@cluster0.j2rs8.mongodb.net/skill_scheduler";
 
-// Middleware
+// ✅ Middleware
 app.use(express.json());
-app.use(cors());
+app.use(
+  session({
+    secret: "your_secret_key",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "https://your-frontend-domain.com"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+    optionsSuccessStatus: 200,
+  })
+);
 
 let db;
 
 // ✅ Import Routes
-const { router: dashboardRouter, initializeCollections: initializeDashboard } = require('./dashboard');
-const { router: notesRouter, initializeCollections: initializeNotes } = require('./notes');
-const { router: plannerRouter, initializeCollections: initializePlanner } = require('./planner');
-const { router: quizzeRouter, initializeCollections: initializeQuizzes } = require('./quizz');
+const { router: authRouter, initializeCollections: initializeAuth } = require("./auth");
+const { router: dashboardRouter, initializeCollections: initializeDashboard } = require("./dashboard");
+const { router: notesRouter, initializeCollections: initializeNotes } = require("./notes");
+const { router: plannerRouter, initializeCollections: initializePlanner } = require("./planner");
+const { router: quizzeRouter, initializeCollections: initializeQuizzes } = require("./quizz");
+
+
+
 
 // ✅ Connect to MongoDB and initialize collections
 async function initializeDatabase() {
-    try {
-        const client = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-        console.log("✅ Connected to MongoDB");
+  try {
+    const client = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+    console.log("✅ Connected to MongoDB");
 
-        db = client.db(); // ✅ Use the connected DB
+    db = client.db();
 
-        // ✅ Ensure all collections are initialized
-        initializeDashboard(db);
-        initializeNotes(db);
-        initializePlanner(db);
-        initializeQuizzes(db);
+    // ✅ Initialize Collections
+    initializeAuth(db);
+    initializeDashboard(db);
+    initializeNotes(db);
+    initializePlanner(db);
+    initializeQuizzes(db);
+    
 
-        // ✅ Register API routes after DB is initialized
-        app.use('/api/dashboard', dashboardRouter);
-        app.use('/api/notes', notesRouter);
-        app.use('/api/planner', plannerRouter);
-        app.use("/api/quizz", quizzeRouter);
+    // ✅ Register API Routes
+    app.use("/api/auth", authRouter); // 🔥 Authentication routes
+    app.use("/api/dashboard", dashboardRouter);
+    app.use("/api/notes", notesRouter);
+    app.use("/api/planner", plannerRouter);
+    app.use("/api/quizz", quizzeRouter);
+   
 
-        // ✅ Start the server only if MongoDB connection is successful
-        app.listen(port, () => {
-            console.log(`🚀 Server running at http://localhost:${port}`);
-        });
-    } catch (err) {
-        console.error("❌ Error connecting to MongoDB:", err);
-        process.exit(1); // ✅ Exit if connection fails
-    }
+    // ✅ Start the Server
+    app.listen(port, () => {
+      console.log(`🚀 Server running at http://localhost:${port}`);
+    });
+  } catch (err) {
+    console.error("❌ Error connecting to MongoDB:", err);
+    process.exit(1);
+  }
 }
 
 // ✅ Start Database Initialization
