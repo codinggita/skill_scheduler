@@ -39,40 +39,39 @@ router.get("/quizzes", async (req, res) => {
 });
 
 // ✅ POST: Generate a Quiz
-router.post("/generate-quiz", async (req, res) => {
+router.post("/api/quizz/generate-quiz", async (req, res) => {
   try {
-    const numQuestions = req.body.numQuestions || 5;
-    const quizzes = await quizzesCollection.find().toArray();
+    const { numQuestions } = req.body;
+    const questions = await generateRandomQuestions(numQuestions);
 
-    const allQuestions = quizzes.flatMap((quiz) =>
-      (quiz.questions || []).map((q) => ({
-        question: q.question,
-        options: q.options || [],
-      }))
-    );
+    const newQuiz = {
+      questions: questions,
+      createdAt: new Date(),
+    };
 
-    if (allQuestions.length === 0) {
-      return res.status(400).json({ error: "No questions available to generate quiz" });
+    const result = await db.collection("quizzes").insertOne(newQuiz);
+    
+    console.log("Quiz Inserted:", result); // ✅ Log insertion result
+    
+    if (!result.insertedId) {
+      return res.status(500).json({ error: "Failed to insert quiz" });
     }
 
-    const numToSelect = Math.min(numQuestions, allQuestions.length);
-    const shuffledQuestions = allQuestions
-      .sort(() => Math.random() - 0.5)
-      .slice(0, numToSelect);
-
-    const generatedQuiz = { title: "Generated Quiz", questions: shuffledQuestions };
-
-    res.status(201).json(generatedQuiz);
+    res.json({ _id: result.insertedId, ...newQuiz }); // ✅ Ensure `_id` is sent
   } catch (err) {
-    res.status(500).json({ error: "Error generating quiz", message: err.message });
+    console.error("Error generating quiz:", err);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
+    
 
 /* -------------- ✅ Submit Quiz API -------------- */
 // ✅ POST: Submit Quiz
 router.post("/submit-quiz", async (req, res) => {
   try {
     const { quizId, answers } = req.body;
+
+    console.log(answers)
 
     if (!quizId || !answers) {
       return res.status(400).json({ error: "Quiz ID and answers are required" });
