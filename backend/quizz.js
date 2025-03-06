@@ -39,7 +39,7 @@ router.get("/quizzes", async (req, res) => {
 });
 
 // ✅ POST: Generate a Quiz
-router.post("/api/quizz/generate-quiz", async (req, res) => {
+router.post("/generate-quiz", async (req, res) => {
   try {
     const { numQuestions } = req.body;
     const questions = await generateRandomQuestions(numQuestions);
