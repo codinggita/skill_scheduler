@@ -61,37 +61,38 @@ const Quizz = () => {
     }));
   };
 
-  const handleSubmitQuiz = async (e) => {
+  const handleSubmitQuiz = (e) => {
     e.preventDefault();
-  
-    if (quizzes.length === 0) return;
-  
-    try {
-      const response = await fetch(
-        "https://localhost:3000/api/quizz/submit-quiz",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            quizId: quizzes[0]._id,
-            answers: selectedAnswers,
-          }),
-        }
-      );
-  
-      const result = await response.json();
-  
-      if (!response.ok) {
-        throw new Error(result.error || "Failed to submit quiz");
-      }
-  
-      alert(`Quiz Submitted! Score: ${result.score} / ${result.totalQuestions}`);
-    } catch (error) {
-      console.error("Error submitting quiz:", error);
-      alert("Failed to submit quiz. Please try again.");
-    }
-  };
 
+    
+    console.log("Submitting Quiz Data:", {
+      quizId: quizzes[0]?._id || `QUIZ-${Date.now()}`,
+      answers: selectedAnswers,
+    });
+
+    setQuizzes([{
+      quizId: quizzes[0]?._id || `QUIZ-${Date.now()}`,
+      answers: selectedAnswers,
+    }])
+
+    console.log(quizzes )
+    
+  
+    if (!`QUIZ-${Date.now()}` || Object.keys(selectedAnswers).length === 0) {
+      console.error("Quiz ID or answers are missing!");
+      setError("Please answer all questions before submitting.");
+      return;
+    }
+  
+    navigate("./SubmitQuiz", {
+      state: {
+        quizCode: quizzes[0]._id || `QUIZ-${Date.now()}`,
+        quiz: quizzes[0],
+        answers: selectedAnswers,
+      },
+    });
+  };
+  
   return (
     <motion.div
       className="p-6 mt-12 flex flex-col justify-center items-center min-h-screen overflow-y-auto bg-gray-50"
