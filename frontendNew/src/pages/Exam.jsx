@@ -1,5 +1,8 @@
 import React, { useState } from "react";
-import { Trash2Icon } from "lucide-react";
+import { motion } from "framer-motion";
+import { Calendar, Trash2, PlusCircle } from "lucide-react";
+// Optional: If using npm fontsource
+import "@fontsource/roboto";
 
 function Exam() {
   const [exams, setExams] = useState([
@@ -8,11 +11,7 @@ function Exam() {
     { date: "2024-03-20", subject: "Chemistry", pending: "Lab Report Submission" },
   ]);
 
-  const [newExam, setNewExam] = useState({
-    subject: "",
-    date: "",
-    pending: "",
-  });
+  const [newExam, setNewExam] = useState({ subject: "", date: "", pending: "" });
 
   const handleAddExam = (e) => {
     e.preventDefault();
@@ -26,80 +25,119 @@ function Exam() {
     setExams(exams.filter((_, i) => i !== index));
   };
 
-  return (
-    <div className="min-h-screen  text-white py-8 px-4 sm:px-6 lg:px-8 font-mono">
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-gray-100 rounded-lg text-black shadow-2xl shadow-black/20 p-6 border border-gray-700 font-sans">
-          <h1 className="text-3xl font-bold  mb-2">Exam Schedule</h1>
-          <p className="text-black mb-6">Manage your upcoming exams and track your study progress</p>
+  const rowVariants = {
+    hidden: { opacity: 0, x: -20 },
+    visible: { opacity: 1, x: 0 },
+  };
 
-          <div className="mb-8 font-sans">
-            <form onSubmit={handleAddExam} className="flex flex-wrap gap-4 font-sans">
-              <input
-                type="text"
-                placeholder="Enter subject name "
-                className="flex-1 min-w-[200px] px-4 py-2 bg-gray-800 border border-gray-700 rounded-md  focus:outline-none focus:ring-2 focus:ring-white-500 text-amber-50 "
-                value={newExam.subject}
-                onChange={(e) => setNewExam({ ...newExam, subject: e.target.value })}
-              />
-              <input
-                type="date"
-                className="flex-1 min-w-[200px] px-4 py-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 "
-                value={newExam.date}
-                onChange={(e) => setNewExam({ ...newExam, date: e.target.value })}
-              />
-              <input
-                type="text"
-                placeholder="Enter pending tasks"
-                className="flex-1 min-w-[200px] px-4 py-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 text-white"
-                value={newExam.pending}
-                onChange={(e) => setNewExam({ ...newExam, pending: e.target.value })}
-              />
-              <button
-                type="submit"
-                className="bg-gray-700 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition-colors"
-              >
-                Add Exam
-              </button>
-            </form>
-          </div>
-          
+  return (
+    <motion.div
+      className="py-8 px-4 sm:px-6 lg:px-8"
+      style={{ fontFamily: "Roboto, sans-serif" }} // Apply font here
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <div className="max-w-4xl mx-auto">
+        <motion.div
+          className="bg-white rounded-lg shadow-lg p-6 border border-gray-200"
+          initial={{ y: -20 }}
+          animate={{ y: 0 }}
+        >
+          <h1 className="text-3xl font-bold mb-2 text-gray-800 flex items-center space-x-2">
+            <Calendar className="text-red-500" />
+            <span>Exam Schedule</span>
+          </h1>
+          <p className="text-gray-600 mb-6">Manage your upcoming exams and track your study progress</p>
+
+          <motion.form
+            onSubmit={handleAddExam}
+            className="flex flex-wrap gap-4 mb-8"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+          >
+            <input
+              type="text"
+              placeholder="Enter subject name"
+              className="flex-1 min-w-[200px] px-4 py-2 border text-black border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+              value={newExam.subject}
+              onChange={(e) => setNewExam({ ...newExam, subject: e.target.value })}
+            />
+            <input
+              type="date"
+              className="flex-1 min-w-[200px] px-4 py-2 border text-black border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+              value={newExam.date}
+              onChange={(e) => setNewExam({ ...newExam, date: e.target.value })}
+            />
+            <input
+              type="text"
+              placeholder="Enter pending tasks"
+              className="flex-1 min-w-[200px] px-4 py-2 border text-black border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+              value={newExam.pending}
+              onChange={(e) => setNewExam({ ...newExam, pending: e.target.value })}
+            />
+            <motion.button
+              type="submit"
+              className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <PlusCircle className="w-5 h-5" />
+            </motion.button>
+          </motion.form>
+
           <div className="overflow-x-auto">
-            <table className="min-w-full border border-gray-700">
+            <table className="min-w-full border border-gray-200">
               <thead>
-                <tr className="border-b border-gray-600 font-sans">
-                  <th className="py-3 text-left text-black font-medium">DATE</th>
-                  <th className="py-3 text-left text-black font-medium">SUBJECT</th>
-                  <th className="py-3 text-left text-black font-medium">PENDING WORK</th>
-                  <th className="py-3 text-left text-black font-medium">ACTIONS</th>
+                <tr className="border-b border-gray-300">
+                  <th className="py-3 text-left text-gray-800 font-medium">DATE</th>
+                  <th className="py-3 text-left text-gray-800 font-medium">SUBJECT</th>
+                  <th className="py-3 text-left text-gray-800 font-medium">PENDING WORK</th>
+                  <th className="py-3 text-left text-gray-800 font-medium">ACTIONS</th>
                 </tr>
               </thead>
               <tbody>
                 {exams.map((exam, index) => (
-                  <tr key={index} className="border-b border-gray-700 font-sans">
-                    <td className="py-4 text-gray-900">{exam.date}</td>
-                    <td className="py-4 text-gray-900">{exam.subject}</td>
-                    <td className="py-4 text-gray-900">{exam.pending}</td>
+                  <motion.tr
+                    key={index}
+                    variants={rowVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit={{ opacity: 0, x: 20 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="border-b border-gray-200"
+                  >
+                    <td className="py-4 text-gray-700">{exam.date}</td>
+                    <td className="py-4 text-gray-700">{exam.subject}</td>
+                    <td className="py-4 text-gray-700">{exam.pending}</td>
                     <td className="py-4">
-                      <button
+                      <motion.button
                         onClick={() => handleDelete(index)}
-                        className="text-red-500 hover:text-red-400"
+                        className="text-red-500 hover:text-red-700"
+                        whileHover={{ scale: 1.2 }}
+                        whileTap={{ scale: 0.9 }}
                       >
-                        <Trash2Icon className="h-5 w-5" />
-                      </button>
+                        <Trash2 className="h-5 w-5" />
+                      </motion.button>
                     </td>
-                  </tr>
+                  </motion.tr>
                 ))}
               </tbody>
             </table>
           </div>
-        </div>
+        </motion.div>
 
-        <footer className="mt-8 text-center text-black text-sm font-sans">
+        <motion.footer
+          className="mt-8 text-center text-gray-600 text-sm"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+        >
           © 2024 Study Planner. All rights reserved.
-        </footer>
+        </motion.footer>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
