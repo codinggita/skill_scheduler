@@ -12,7 +12,6 @@ const App = () => {
   return (
     <Router>
       <Navbar/>
-      
       <Routes>
         <Route path="/" element={<Navigate to="/dashboard" />} />
         <Route path="/dashboard" element={<Dashboard />} />
