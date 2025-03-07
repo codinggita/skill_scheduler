@@ -84,13 +84,13 @@ const Quizz = () => {
       return;
     }
   
-    navigate("./SubmitQuiz", {
-      state: {
-        quizCode: quizzes[0]._id || `QUIZ-${Date.now()}`,
-        quiz: quizzes[0],
-        answers: selectedAnswers,
-      },
-    });
+    // navigate("./SubmitQuiz", {
+    //   state: {
+    //     quizCode: quizzes[0]._id || `QUIZ-${Date.now()}`,
+    //     quiz: quizzes[0],
+    //     answers: selectedAnswers,
+    //   },
+    // });
   };
   
   return (
@@ -182,11 +182,7 @@ const Quizz = () => {
                       ))}
                     </div>
                   </motion.div>
-                )) || (
-                  <p className="text-red-500 flex items-center">
-                    <XCircle className="mr-2" /> No questions available
-                  </p>
-                )}
+                )) }
               </motion.div>
             ))}
             <motion.button

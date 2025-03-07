@@ -71,9 +71,6 @@ router.post("/api/quizz/generate-quiz", async (req, res) => {
   }
 });
 
-
-
-
     
 // ✅ POST: Submit Quiz
 router.post("/submit-quiz", async (req, res) => {

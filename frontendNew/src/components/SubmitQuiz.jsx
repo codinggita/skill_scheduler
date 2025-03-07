@@ -1,3 +1,4 @@
+// frontend/SubmitQuiz.jsx
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -17,7 +18,18 @@ const SubmitQuiz = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log("Submitted answers:", answers);
+      const response = await fetch("https://skill-scheduler.onrender.com/api/quiz/submit-quiz", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ quizId: quiz._id, answers }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to submit quiz");
+      }
+
+      const result = await response.json();
+      alert(`Quiz submitted! Your score: ${result.score}/${result.totalQuestions}`);
       navigate("/quizzes"); // Redirect after submission
     } catch (error) {
       console.error("Error submitting quiz:", error);
@@ -35,7 +47,7 @@ const SubmitQuiz = () => {
       
       <form onSubmit={handleSubmit} className="w-full max-w-2xl">
         {quiz.questions?.map((q, index) => (
-          <div key={index} className="mb-6">
+          <div key={q._id} className="mb-6">
             <p className="font-semibold">
               {index + 1}. {q.question}
             </p>
@@ -43,20 +55,19 @@ const SubmitQuiz = () => {
               <div key={optIndex} className="ml-4">
                 <input
                   type="radio"
-                  id={`${index}-${optIndex}`}
-                  name={`question-${index}`}
+                  id={`${q._id}-${optIndex}`}
+                  name={`question-${q._id}`}
                   value={option}
-                  onChange={() => handleOptionChange(q._id || index, option)}
-                  checked={answers[q._id || index] === option}
+                  onChange={() => handleOptionChange(q._id, option)}
+                  checked={answers[q._id] === option}
                 />
-                <label htmlFor={`${index}-${optIndex}`} className="ml-2">
+                <label htmlFor={`${q._id}-${optIndex}`} className="ml-2">
                   {option}
                 </label>
               </div>
             )) || <p className="text-red-500">No options available.</p>}
           </div>
         ))}
-        {/* Single Submit Button at the Bottom */}
         <button
           type="submit"
           className="bg-blue-500 text-white px-4 py-2 rounded w-full max-w-xs"
