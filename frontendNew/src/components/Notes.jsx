@@ -11,24 +11,23 @@ const Notes = () => {
 
   useEffect(() => {
     setLoading(true);
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 500); // Simulating a loading time of 500ms
-
+    const timer = setTimeout(() => setLoading(false), 500);
     return () => clearTimeout(timer);
   }, [tabState]);
 
   return (
     <div className="flex bg-gray-100 w-screen h-[calc(100vh-64px)] mt-[64px] overflow-y-auto">
       {/* Sidebar */}
-      <aside className="w-64 sticky top-0 p-4 shadow-md bg-white">
-        <div className="text-blue-600 font-bold text-lg mb-6">Skill Scheduler</div>
+      <aside className="w-64 sticky top-0 p-4 shadow-md bg-white animate-slide-in-left">
+        <div className="text-blue-600 font-bold text-lg mb-6 animate-fade-in">Skill Scheduler</div>
         <nav className="space-y-2">
           {["notes", "yesterday", "revision", "improvements"].map((tab) => (
             <button
               key={tab}
-              className={`w-full flex items-center p-3 rounded-lg text-left ${
-                tabState === tab ? "bg-black text-white" : "hover:bg-gray-200 text-gray-700"
+              className={`w-full flex items-center p-3 rounded-lg text-left transition-all duration-300 ${
+                tabState === tab
+                  ? "bg-black text-white shadow-lg"
+                  : "hover:bg-gray-200 text-gray-700 hover:scale-105"
               }`}
               onClick={() => setTabState(tab)}
             >
@@ -46,12 +45,12 @@ const Notes = () => {
         {loading ? (
           <ClipLoader color="#000" size={50} />
         ) : (
-          <>
+          <div className="animate-fade-in delay-200">
             {tabState === "notes" && <NotesList />}
             {tabState === "yesterday" && <Yesterday />}
             {tabState === "revision" && <Revision />}
             {tabState === "improvements" && <Improvements />}
-          </>
+          </div>
         )}
       </main>
     </div>

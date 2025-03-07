@@ -34,7 +34,7 @@ const Quizz = () => {
     setError("");
     try {
       const response = await fetch(
-        "https://skill-scheduler.onrender.com/api/quizz/generate-quiz",
+        "https://skill-scheduler.onrender.com/api/quizz/api/quizz/generate-quiz",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
