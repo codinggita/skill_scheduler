@@ -17,7 +17,7 @@ let db;
 const { router: dashboardRouter, initializeCollections: initializeDashboard } = require("./dashboard");
 const { router: notesRouter, initializeCollections: initializeNotes } = require("./notes");
 const { router: plannerRouter, initializeCollections: initializePlanner } = require("./planner");
-const { router: quizzeRouter, initializeCollections: initializeQuizzes } = require("./quizz");
+const { router: quizzRouter, initializeCollections: initializeQuizzes } = require("./quizz");
 
 // ✅ Connect to MongoDB and initialize collections
 async function initializeDatabase() {
@@ -40,7 +40,7 @@ async function initializeDatabase() {
     app.use("/api/dashboard", dashboardRouter);
     app.use("/api/notes", notesRouter);
     app.use("/api/planner", plannerRouter);
-    app.use("/api/quizz", quizzeRouter);
+    app.use("/api/quizz", quizzRouter);
 
     // ✅ Start the Server
     app.listen(port, () => {
