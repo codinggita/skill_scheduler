@@ -222,7 +222,10 @@ router.post("/api/quizz/submit-quiz", async (req, res) => {
 });
 
 // ✅ POST: Check Answers
-router.post('/api/quizz/check-answers', async (req, res) => {
+// ... (previous imports and setup remain the same)
+
+// Fix POST: Submit Quiz & Calculate Score
+router.post("/api/quizz/submit-quiz", async (req, res) => {
   try {
     const { quizId, answers } = req.body;
 
@@ -230,50 +233,71 @@ router.post('/api/quizz/check-answers', async (req, res) => {
       return res.status(400).json({ error: "Quiz ID and valid answers object are required" });
     }
 
-    console.log("Received quizId:", quizId);
-    console.log("User Answers:", answers);
-
-    // Check if quiz exists in the database
     const quiz = await quizzesCollection.findOne({ _id: new ObjectId(quizId) });
 
     if (!quiz) {
-      return res.status(404).json({ error: 'Quiz not found' });
+      return res.status(404).json({ error: "Quiz not found" });
     }
 
-    // Initialize results object
-    let correctAnswers = 0;
-    let wrongAnswers = 0;
+    let score = 0;
+    let correctAnswersCount = 0;
     const answerDetails = {};
 
-    // Compare user answers with correct answers
-    quiz.questions.forEach((question) => {
-      const userAnswer = answers[question.question]; // Match answer by question text
-      const correctAnswer = question.correctAnswer;
-      const isCorrect = userAnswer === correctAnswer;
-
-      answerDetails[question.question] = { userAnswer, correctAnswer, isCorrect };
-
+    quiz.questions.forEach((q, index) => {
+      const userAnswer = answers[index]; // Match by index instead of question text
+      const isCorrect = userAnswer === q.correctAnswer;
+      
+      answerDetails[index] = {
+        question: q.question,
+        userAnswer,
+        correctAnswer: q.correctAnswer,
+        isCorrect
+      };
+      
       if (isCorrect) {
-        correctAnswers++;
-      } else {
-        wrongAnswers++;
+        score += 1;
+        correctAnswersCount++;
       }
     });
 
-    // Return quiz results
-    return res.json({
+    // Store the submission
+    const submission = {
+      quizId,
+      userAnswers: answers,
+      score: (correctAnswersCount / quiz.questions.length) * 100,
+      correctAnswers: correctAnswersCount,
       totalQuestions: quiz.questions.length,
-      correctAnswers,
-      wrongAnswers,
-      answerDetails,
-      score: Math.round((correctAnswers / quiz.questions.length) * 100),
-    });
+      date: new Date()
+    };
+    
+    await quizSubmissionsCollection.insertOne(submission);
 
-  } catch (error) {
-    console.error('Error checking answers:', error);
-    return res.status(500).json({ error: 'Failed to check answers' });
+    res.status(200).json({
+      message: "Quiz submitted successfully",
+      score: Math.round((correctAnswersCount / quiz.questions.length) * 100),
+      totalQuestions: quiz.questions.length,
+      correctAnswers: correctAnswersCount,
+      answerDetails,
+    });
+  } catch (err) {
+    console.error("Error submitting quiz:", err);
+    res.status(500).json({ error: "Error submitting quiz", message: err.message });
   }
 });
 
-// ✅ Export the router and initialize function
+// Add endpoint to get quiz history
+router.get("/api/quizz/history", async (req, res) => {
+  try {
+    const history = await quizSubmissionsCollection
+      .find()
+      .sort({ date: -1 })
+      .limit(10)
+      .toArray();
+    res.status(200).json(history);
+  } catch (err) {
+    res.status(500).json({ error: "Error fetching quiz history", message: err.message });
+  }
+});
+
+// ... (rest of the file remains the same)
 module.exports = { router, initializeCollections };
