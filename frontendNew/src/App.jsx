@@ -5,7 +5,7 @@ import Dashboard from "./components/Dashboard.jsx"
 import Notes from "./components/Notes.jsx";
 import Planner from "./components/Planner.jsx";
 import Quizz from "./components/Quizz.jsx";
-import SubmitQuiz from "./components/SubmitQuiz.jsx";
+
 import Footer from "./components/Footer.jsx";
 
 const App = () => {
@@ -18,7 +18,7 @@ const App = () => {
         <Route path="/notes" element={<Notes />} />
         <Route path="/planner" element={<Planner />} />
         <Route path="/quiz" element={<Quizz/>} />
-        <Route path="/quiz/submitQuiz" element= {<SubmitQuiz />}></Route>
+       
       </Routes>
       <Footer/>
     </Router>
