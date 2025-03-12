@@ -22,38 +22,6 @@ Skill Scheduler is an interactive study planner designed to help students and pr
 - **Figma Design**: [View UI Design](https://www.figma.com/design/1PDr2aGXQJMBxMr5OSgDRF/Skills-Schedular?node-id=0-1&t=3u6CpLX7JLfgtA9Q-1)
 - **GitHub Repository**: [View Source Code](https://github.com/ishitatrivedi-dell/skill_scheduler)
 
-## Installation & Setup
-### Backend Setup
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/ishitatrivedi-dell/skill_scheduler.git
-   ```
-2. Navigate to the backend folder:
-   ```bash
-   cd skill_scheduler/backend
-   ```
-3. Install dependencies:
-   ```bash
-   npm install
-   ```
-4. Start the server:
-   ```bash
-   node server.js
-   ```
-
-### Frontend Setup
-1. Navigate to the frontend folder:
-   ```bash
-   cd ../frontend
-   ```
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Start the React app:
-   ```bash
-   npm start
-   ```
 
 ## API Endpoints
 ### Dashboard
