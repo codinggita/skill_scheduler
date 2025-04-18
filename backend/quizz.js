@@ -11,7 +11,7 @@ let quizSubmissionsCollection;
 const initializeCollections = (database) => {
   db = database;
   quizzesCollection = db.collection("quizzes");
-  quizSubmissionsCollection = db.collection("performance"); // Collection to store quiz submissions
+  quizSubmissionsCollection = db.collection("performance");
 };
 
 // CORS Configuration
@@ -29,7 +29,7 @@ router.options("*", cors(corsOptions));
 /* -------------- Quizzes API -------------- */
 
 // GET: Fetch All Quizzes
-router.get("/api/quizz/quizzes", async (req, res) => {
+router.get("/quizzes", async (req, res) => {
   try {
     const quizzes = await quizzesCollection.find().toArray();
     res.status(200).json(quizzes);
@@ -39,7 +39,7 @@ router.get("/api/quizz/quizzes", async (req, res) => {
 });
 
 // POST: Generate a Quiz
-router.post("/api/quizz/generate-quiz", async (req, res) => {
+router.post("/generate-quiz", async (req, res) => {
   try {
     const numQuestions = req.body.numQuestions || 5;
     const quizzes = await quizzesCollection.find().toArray();
@@ -48,7 +48,7 @@ router.post("/api/quizz/generate-quiz", async (req, res) => {
       (quiz.questions || []).map((q) => ({
         question: q.question,
         options: q.options || [],
-        correctAnswer: q.correctAnswer, // Include correct answers for later validation
+        correctAnswer: q.correctAnswer,
       }))
     );
 
@@ -59,35 +59,53 @@ router.post("/api/quizz/generate-quiz", async (req, res) => {
     const numToSelect = Math.min(numQuestions, allQuestions.length);
     const shuffledQuestions = allQuestions.sort(() => Math.random() - 0.5).slice(0, numToSelect);
 
-    const generatedQuiz = { title: "Generated Quiz", questions: shuffledQuestions };
+    const generatedQuiz = {
+      title: "Generated Quiz",
+      questions: shuffledQuestions.map(q => ({
+        question: q.question,
+        options: q.options,
+        correctAnswer: q.correctAnswer
+      }))
+    };
 
     res.status(201).json(generatedQuiz);
   } catch (err) {
-    res.status(500).json({ error: "Error generating quiz", message: err.message });
+    console.error("Quiz generation error:", err);
+    res.status(500).json({ 
+      error: "Error generating quiz",
+      details: err.message 
+    });
   }
 });
 
 // POST: Check Answers
-router.post("/api/quizz/check-answers", async (req, res) => {
+router.post("/check-answers", async (req, res) => {
   try {
     const { quizId, quiz, answers } = req.body;
 
-    if (!quizId || !answers || typeof answers !== "object" || !quiz || !quiz.questions) {
-      return res.status(400).json({ error: "Quiz ID, quiz data, and valid answers object are required" });
+    // Enhanced validation
+    if (!quizId) return res.status(400).json({ error: "Quiz ID is required" });
+    if (!quiz || !Array.isArray(quiz.questions)) {
+      return res.status(400).json({ error: "Invalid quiz format" });
+    }
+    if (!answers || typeof answers !== "object") {
+      return res.status(400).json({ error: "Answers must be an object" });
     }
 
-    console.log("Received quizId:", quizId);
-    console.log("Quiz Data:", quiz);
-    console.log("User Answers:", answers);
+    // Verify all questions have correctAnswer
+    const hasMissingAnswers = quiz.questions.some(q => !q.correctAnswer);
+    if (hasMissingAnswers) {
+      return res.status(400).json({ error: "Some questions are missing correct answers" });
+    }
 
-    // Initialize results object
+    // Initialize results
     let correctAnswers = 0;
     let wrongAnswers = 0;
     const answerDetails = {};
 
-    // Compare user answers with correct answers from the provided quiz
+    // Check each answer
     quiz.questions.forEach((question, index) => {
-      const userAnswer = answers[index]; // Match answer by index
+      const userAnswer = answers[index];
       const correctAnswer = question.correctAnswer;
       const isCorrect = userAnswer === correctAnswer;
 
@@ -104,22 +122,41 @@ router.post("/api/quizz/check-answers", async (req, res) => {
       }
     });
 
-    // Return quiz results
-    return res.json({
+    // Calculate score
+    const score = Math.round((correctAnswers / quiz.questions.length) * 100);
+
+    // Store results in database
+    try {
+      await quizSubmissionsCollection.insertOne({
+        quizId,
+        userId: req.user?.id || "anonymous",
+        score,
+        correctAnswers,
+        wrongAnswers,
+        submittedAt: new Date(),
+      });
+    } catch (dbError) {
+      console.error("Failed to store quiz results:", dbError);
+    }
+
+    res.json({
       totalQuestions: quiz.questions.length,
       correctAnswers,
       wrongAnswers,
       answerDetails,
-      score: Math.round((correctAnswers / quiz.questions.length) * 100),
+      score,
     });
   } catch (error) {
     console.error("Error checking answers:", error);
-    return res.status(500).json({ error: "Failed to check answers" });
+    res.status(500).json({ 
+      error: "Internal server error",
+      details: error.message 
+    });
   }
 });
 
-// POST: Submit Quiz (Optional - Kept for backward compatibility if needed)
-router.post("/api/quizz/submit-quiz", async (req, res) => {
+// POST: Submit Quiz (Legacy endpoint)
+router.post("/submit-quiz", async (req, res) => {
   try {
     const { quizId, answers } = req.body;
 
@@ -154,5 +191,4 @@ router.post("/api/quizz/submit-quiz", async (req, res) => {
   }
 });
 
-// Export the router and initialize function
 module.exports = { router, initializeCollections };
