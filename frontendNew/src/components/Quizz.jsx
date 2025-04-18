@@ -18,7 +18,7 @@ const Quizz = () => {
     const fetchQuizzes = async () => {
       try {
         const response = await fetch(
-          "https://skill-scheduler.onrender.com/api/quizz/api/quizz/quizzes"
+          "https://skill-scheduler.onrender.com/api/quizz/quizzes"
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -41,7 +41,7 @@ const Quizz = () => {
     setResults(null);
     try {
       const response = await fetch(
-        "https://skill-scheduler.onrender.com/api/quizz/api/quizz/generate-quiz",
+        "https://skill-scheduler.onrender.com/api/quizz/generate-quiz",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -49,13 +49,18 @@ const Quizz = () => {
         }
       );
 
-      if (!response.ok) throw new Error("Failed to generate quiz");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to generate quiz");
+      }
 
       const data = await response.json();
       setQuizzes([data]);
       setSelectedAnswers({});
+      setSuccess("Quiz generated successfully!");
     } catch (err) {
-      setError(err.message);
+      console.error("Quiz generation error:", err);
+      setError(err.message || "Failed to generate quiz. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -70,19 +75,31 @@ const Quizz = () => {
 
   const handleSubmitQuiz = async (e) => {
     e.preventDefault();
+    
+    // Validation
+    if (!quizzes.length) {
+      setError("No quiz available to submit");
+      return;
+    }
+    
+    const unanswered = quizzes[0].questions.filter((_, i) => !selectedAnswers[i]);
+    if (unanswered.length) {
+      setError(`Please answer all questions (${unanswered.length} unanswered)`);
+      return;
+    }
+
     setSubmitting(true);
     setError("");
     setSuccess("");
 
     const quizId = quizzes[0]?._id || `QUIZ-${Date.now()}`;
-    const quizData = quizzes[0]; // Send the entire quiz object
+    const quizData = quizzes[0];
 
-    if (!quizId || Object.keys(selectedAnswers).length === 0) {
-      console.error("Quiz ID or answers are missing!");
-      setError("Please answer all questions before submitting.");
-      setSubmitting(false);
-      return;
-    }
+    console.log("Submitting quiz with:", {
+      quizId,
+      quiz: quizData,
+      answers: selectedAnswers
+    });
 
     try {
       const response = await fetch(
@@ -91,24 +108,32 @@ const Quizz = () => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            quizId: quizId,
-            quiz: quizData, // Include the full quiz data
+            quizId,
+            quiz: quizData,
             answers: selectedAnswers,
           }),
         }
       );
 
       if (!response.ok) {
-        throw new Error("Failed to check answers via API");
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to check answers via API");
       }
 
       const quizResults = await response.json();
       setResults(quizResults);
       setShowResults(true);
-      setSuccess("Quiz checked successfully!");
+      setSuccess("Quiz submitted successfully!");
     } catch (err) {
-      console.error("Error checking quiz:", err);
-      setError("Failed to check answers. Please try again.");
+      console.error("Full error checking quiz:", {
+        error: err,
+        request: {
+          quizId,
+          quiz: quizData,
+          answers: selectedAnswers
+        }
+      });
+      setError(err.message || "Failed to check answers. Please try again.");
     } finally {
       setSubmitting(false);
     }
