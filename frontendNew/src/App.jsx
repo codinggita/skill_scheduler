@@ -5,7 +5,6 @@ import Dashboard from "./components/Dashboard.jsx"
 import Notes from "./components/Notes.jsx";
 import Planner from "./components/Planner.jsx";
 import Quizz from "./components/Quizz.jsx";
-
 import Footer from "./components/Footer.jsx";
 
 const App = () => {
