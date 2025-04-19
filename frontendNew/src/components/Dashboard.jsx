@@ -19,10 +19,9 @@ const Dashboard = () => {
         fetch("https://skill-scheduler.onrender.com/api/dashboard/progress"),
         fetch("https://skill-scheduler.onrender.com/api/dashboard/dashboard"),
         fetch("https://skill-scheduler.onrender.com/api/dashboard/upcoming-exams"),
-        fetch("https://skill-scheduler.onrender.com/api/dashboard/quiz-performance"), // New fetch
+        fetch("https://skill-scheduler.onrender.com/api/dashboard/quiz-performance"),
       ]);
 
-      // Process API data
       const progressData = await progressRes.json();
       setProgress(progressData.completion || 0);
       setStudyHours(progressData.studiedHours || 0);
@@ -35,18 +34,15 @@ const Dashboard = () => {
       examsData = examsData.sort((a, b) => new Date(a.date) - new Date(b.date));
       setUpcomingExams(examsData || []);
 
-      // Process quiz performance data
       const quizPerformanceData = await quizPerformanceRes.json();
       setQuizHistory(quizPerformanceData.history || []);
 
-      // Update localStorage for fallback
       localStorage.setItem("quizHistory", JSON.stringify(quizPerformanceData.history || []));
       localStorage.setItem("quizProgress", quizPerformanceData.stats?.accuracy || progressData.quizProgress || 0);
 
       setLastUpdate(new Date());
     } catch (error) {
       console.error("Error fetching data:", error);
-      // Fallback to localStorage
       const storedProgress = localStorage.getItem("quizProgress");
       if (storedProgress) {
         setQuizProgress(parseInt(storedProgress));
@@ -72,7 +68,7 @@ const Dashboard = () => {
     checkForQuizUpdate();
     fetchDashboardData();
 
-    const interval = setInterval(fetchDashboardData, 300000); // Refresh every 5 minutes
+    const interval = setInterval(fetchDashboardData, 300000);
     return () => clearInterval(interval);
   }, []);
 
